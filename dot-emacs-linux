@@ -1,0 +1,241 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; general settings
+(menu-bar-mode  t)                       ;; show the menu...
+(mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
+(tool-bar-mode -1)                       ;; turn-off toolbar 
+
+(setq auto-save-default nil)             ;; disable auto save
+(setq make-backup-files nil)             ;; disable creating backup files
+
+(setq cua-enable-cua-keys nil)           ;; only for rectangles
+(cua-mode t)
+
+(setq ;; scrolling
+  scroll-margin 0                        ;; do smooth scrolling, ...
+  scroll-conservatively 100000           ;; ... the defaults ...
+  scroll-up-aggressively 0               ;; ... are very ...
+  scroll-down-aggressively 0             ;; ... annoying
+  scroll-preserve-screen-position t)     ;; preserve screen pos with C-v/M-v 
+
+(global-visual-line-mode 1)              ;; enable line wrapping
+;; (global-linum-mode 1)                    ;; show line number
+
+(toggle-scroll-bar nil)                  ;; hide scroll bar
+
+(setq fringe-mode '(1 . 0))              ;; emacs 22+
+(delete-selection-mode 1)                ;; delete the sel with a keyp
+
+(setq x-select-enable-clipboard t        ;; copy-paste should work ...
+  interprogram-paste-function            ;; ...with...
+  'x-cut-buffer-or-selection-value)      ;; ...other X clients
+
+(setq search-highlight t                 ;; highlight when searching... 
+  query-replace-highlight t)             ;; ...and replacing
+(fset 'yes-or-no-p 'y-or-n-p)            ;; enable y/n answers to yes/no 
+
+(setq initial-scratch-message
+  ";; scratch buffer created -- happy hacking\n")
+
+(setq-default
+ frame-title-format
+ '(:eval
+   (format "%s@%s:%s"
+           (or (file-remote-p default-directory 'user) user-login-name)
+           (or (file-remote-p default-directory 'host) system-name)
+           (file-name-nondirectory (or (buffer-file-name) default-directory)))))
+
+(put 'narrow-to-region 'disabled nil)    ;; enable...
+(put 'erase-buffer 'disabled nil)        ;; ... useful things
+(file-name-shadow-mode t)                ;; be smart about filenames in mbuf
+
+(setq inhibit-startup-message t          ;; don't show ...    
+  inhibit-startup-echo-area-message t)   ;; ... startup messages
+(setq require-final-newline t)           ;; end files with a newline
+
+;; slick-copy: make copy-past a bit more intelligent
+;; from: http://www.emacswiki.org/emacs/SlickCopy
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively witand type RET to get full documentation.h no active region, copy a single
+line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (message "Copied line")
+      (list (line-beginning-position)
+               (line-beginning-position 2)))))
+
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single
+line instead."
+  (interactive
+    (if mark-active (list (region-beginning) (region-end))
+      (list (line-beginning-position)
+        (line-beginning-position 2)))))
+        
+
+;; key board / input method settings
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(set-language-environment "UTF-8")       ; prefer utf-8 for language settings
+(set-input-method nil)                   ; no funky input for normal editing;
+(setq read-quoted-char-radix 10)         ; use decimal, not octal
+
+        
+;; set spliting window horizontally by default
+;; (setq split-height-threshold nil)
+;; (setq split-width-threshold 0)
+
+;; default directory
+(setq default-directory "d:/Document/Projects/")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; the modeline
+;; 
+(line-number-mode t)                     ;; show line numbers
+(column-number-mode t)                   ;; show column numbers
+(size-indication-mode t)                 ;; show file size (emacs 22+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(add-to-list 'load-path "~/.emacs.d")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; some handy packages
+;;
+;; dired-details
+(require 'dired-details)
+(dired-details-install)
+
+;; dired-single
+(require 'dired-single)
+
+(defun my-dired-init ()
+  "Bunch of stuff to run for dired, either immediately or when it's loaded."
+  ;; <add other stuff here>
+  (define-key dired-mode-map [return] 'dired-single-buffer)
+  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+  (define-key dired-mode-map "^"
+  (function
+   (lambda nil (interactive) (dired-single-buffer "..")))))
+
+;; if dired's already loaded, then the keymap will be bound
+(if (boundp 'dired-mode-map)
+  ;; we're good to go; just add our bindings
+  (my-dired-init)
+  ;; it's not loaded yet, so add our bindings to the load-hook
+  (add-hook 'dired-load-hook 'my-dired-init))
+
+;; hl-line: highlight the current line
+(when (fboundp 'global-hl-line-mode)
+  (global-hl-line-mode t)) ;; turn it on for all modes by default
+
+;; yasnippet
+;; (add-to-list 'load-path
+;;                  "~/.emacs.d/yasnippet-0.6.1c")
+;;    (require 'yasnippet) ;; not yasnippet-bundle
+;;    (yas/initialize)
+;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+(require 'yasnippet-bundle)
+
+;; org mode
+(add-to-list 'load-path "d:/Document/Projects/Emacs/org-mode/lisp")
+(require 'org-install)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-agenda-files (list "d:/Document/Org/work.org"
+                             "d:/Document/Org/school.org" 
+                             "d:/Document/Org/home.org"))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; My key bindings
+
+;; switch to next window
+(global-set-key "\M-`" 'other-window)
+
+;; switch to next buffer
+(global-set-key "\M-1" 'next-buffer)
+
+;; delete current window
+(global-set-key "\M-2" 'delete-window)
+
+
+;; sensitivelly adjust current window
+(global-set-key [f10]
+	(lambda ()
+		(interactive)
+		(let ((buf (window-buffer))
+					(win (selected-window))
+					(largest-win (get-largest-window)))
+			(unless (equal win largest-win)
+        (let* ((left (nth 0 (window-inside-pixel-edges largest-win)))
+              (top (nth 1 (window-inside-pixel-edges largest-win)))
+              (right (nth 2 (window-inside-pixel-edges largest-win)))
+              (bottom (nth 3 (window-inside-pixel-edges largest-win)))
+              (width (- right left))
+              (height (- bottom top)))
+				(if (> width height)
+						(progn
+						(select-window (split-window largest-win nil t)))     ;; split horizontally
+					(progn
+						(select-window (split-window largest-win nil nil))))  ;; split vertically
+        (set-window-buffer (selected-window) buf)
+        (delete-window win))))))
+
+;; toggle scroll bar
+(global-set-key [f11]
+  (lambda ()
+    (interactive)
+    (if (null (car (frame-current-scroll-bars)))
+      (toggle-scroll-bar t)
+      (toggle-scroll-bar nil))))
+
+(global-set-key [f12] 'quit-window)
+      
+(global-set-key (kbd "RET")         'newline-and-indent)
+(global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
+(global-set-key (kbd "<delete>")    'delete-char)  ; delete == delete    
+(global-set-key (kbd "M-g")         'goto-line)    ; M-g  'goto-line
+      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; programming
+(autoload 'linum-mode "linum" "mode for line numbers" t) 
+(global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; productivity stuff; f9-f12 
+(global-set-key (kbd "C-c l") 'org-store-link)  ;; Links
+(global-set-key (kbd "C-c a") 'org-agenda)      ;; Agenda
+(global-set-key (kbd "C-c b") 'org-iswitchb)    ;; switch
+(global-set-key (kbd "<f5>")  'wl)              ;; Wanderlust
+(global-set-key (kbd "<f6>")  'org-agenda-list) ;; Agenda
+(global-set-key (kbd "<f7>")  'org-todo-list)   ;; todo-list (NextActions)
+(global-set-key (kbd "<f8>")  'remember)        ;; remember
+
+(global-set-key (kbd "C-c W") ;; wanderlust
+  (lambda()(interactive)(find-file wl-init-file))) 
+
+
+
+;; program shortcuts
+(global-set-key (kbd "C-c E") ;; .emacs
+  (lambda()(interactive)(find-file "~/.emacs")))
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(tab-width 2))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
