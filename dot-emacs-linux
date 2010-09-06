@@ -1,5 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
+(set-default-font "Monospace-6")
 (menu-bar-mode  t)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
 (tool-bar-mode -1)                       ;; turn-off toolbar 
@@ -88,7 +89,7 @@ line instead."
 ;; (setq split-width-threshold 0)
 
 ;; default directory
-(setq default-directory "d:/Document/Projects/")
+(setq default-directory "~/Projects/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -145,15 +146,15 @@ line instead."
 (require 'yasnippet-bundle)
 
 ;; org mode
-(add-to-list 'load-path "d:/Document/Projects/Emacs/org-mode/lisp")
+(add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-(setq org-agenda-files (list "d:/Document/Org/work.org"
-                             "d:/Document/Org/school.org" 
-                             "d:/Document/Org/home.org"))
+(setq org-agenda-files (list "~/Org/work.org"
+                             "~/Org/school.org" 
+                             "~/Document/Org/home.org"))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
 
