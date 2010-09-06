@@ -4323,7 +4323,14 @@ Use multiple times to bind different COMMANDs to the same KEY."
 
 					 ;; for Rails
 					 ;; (KEY TEMPLATE NAME CONDITION GROUP EXPAND-ENV FILE KEYBINDING)
-					 ("bt" "belongs_to :${class}" "belongs_to : ..." nil "active record" nil nil nil)
+					 ("bt" "belongs_to :${class}, :class_name => \"${ClassName}\", :foreign_key => \"${foreign_key}\"" "belongs_to :class, :class_name, :foreign_key" nil "active record" nil nil nil)
+					 ("bt" "belongs_to :${class}, :class_name => \"${ClassName}\"" "belongs_to :class, :class_name" nil "active record" nil nil nil)
+					 ("bt" "belongs_to :${class}" "belongs_to :class" nil "active record" nil nil nil)
+					 ("ho" "has_one :${class}, :class_name => \"${ClassName}\", :foreign_key => \"${foreign_key}\"" "has_one :class, :class_name, :foreign_key" nil "active record" nil nil nil)
+					 ("ho" "has_one :${class}, :class_name => \"${ClassName}\"" "has_one :class, :class_name" nil "active record" nil nil nil)
+					 ("ho" "has_one :${class}" "has_one :class" nil "active record" nil nil nil)
+					 ("hm" "has_many :${class}" "has_many : ..." nil "active record" nil nil nil)
+
 					 ("flash" "flash[:${notice}] = \"${Text here...}\"" "flash[: ...] = \" ... \"" nil "flash" nil nil nil)
 					 )
 		     '(text-mode))

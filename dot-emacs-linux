@@ -144,6 +144,7 @@ line instead."
 ;;    (yas/initialize)
 ;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
 (require 'yasnippet-bundle)
+(setq yas/prompt-functions '(yas/dropdown-prompt yas/x-prompt))
 
 ;; org mode
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
