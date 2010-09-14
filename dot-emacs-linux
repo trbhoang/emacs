@@ -145,7 +145,6 @@ line instead."
 ;;    (yas/initialize)
 ;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
 (require 'yasnippet-bundle)
-(setq yas/prompt-functions '(yas/dropdown-prompt yas/x-prompt))
 
 ;; org mode
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
@@ -157,6 +156,20 @@ line instead."
 (setq org-agenda-files (list "~/Org/work.org"
                              "~/Org/school.org" 
                              "~/Document/Org/home.org"))
+
+;; auto-complete mode
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(ac-config-default)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Programming languages
+
+;; haml mode
+(add-to-list 'load-path "~/.emacs.d/haml-mode")
+(require 'haml-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
 
