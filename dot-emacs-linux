@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
-(set-default-font "Monospace-5.7")
+(set-default-font "Monospace-9")
 (menu-bar-mode  nil)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
 (tool-bar-mode -1)                       ;; turn-off toolbar
@@ -180,11 +180,11 @@ line instead."
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
 
-;; switch to next buffer
-(global-set-key "\M-1" 'next-buffer)
+;; switch to next tabbar buffer
+(global-set-key "\M-1" 'tabbar-forward-tab)
 
-;; delete current window
-(global-set-key "\M-2" 'delete-window)
+;; switch to next tabbar group
+(global-set-key "\M-2" 'tabbar-forward-group)
 
 
 ;; sensitivelly adjust current window
