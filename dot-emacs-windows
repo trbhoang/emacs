@@ -82,7 +82,6 @@ line instead."
 (set-input-method nil)                   ; no funky input for normal editing;
 (setq read-quoted-char-radix 10)         ; use decimal, not octal
 
-        
 ;; set spliting window horizontally by default
 ;; (setq split-height-threshold nil)
 ;; (setq split-width-threshold 0)
@@ -143,9 +142,10 @@ line instead."
 ;;    (yas/initialize)
 ;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
 (require 'yasnippet-bundle)
+(setq yas/trigger-key (kbd "C-c <kp-multiply>"))
 
 ;; org mode
-(add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
+(add-to-list 'load-path "d:/Document/Projects/Emacs/org-mode/lisp")
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
@@ -154,18 +154,30 @@ line instead."
 (setq org-agenda-files (list "d:/Document/Org/work.org"
                              "d:/Document/Org/school.org" 
                              "d:/Document/Org/home.org"))
+
+;; auto complete mode
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(ac-config-default)
+;; Show 0.8 second later
+(setq ac-auto-show-menu 0.4)
+
+;; Tabbar
+(require 'tabbar)
+(tabbar-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
 
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
 
-;; switch to next buffer
-(global-set-key "\M-1" 'next-buffer)
+;; switch to next tabbar buffer
+(global-set-key "\M-1" 'tabbar-forward-tab)
 
-;; delete current window
-(global-set-key "\M-2" 'delete-window)
-
+;; switch to next tabbar group
+(global-set-key "\M-2" 'tabbar-forward-group)
 
 ;; sensitivelly adjust current window
 (global-set-key [f10]
@@ -239,3 +251,42 @@ line instead."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; my rails project browser
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq my-rails-project "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
+(setq my-rails-project-app (concat my-rails-project "app/"))
+(setq my-rails-project-controllers (concat my-rails-project "app/controllers/"))
+(setq my-rails-project-views (concat my-rails-project "app/views/"))
+(setq my-rails-project-models (concat my-rails-project "app/models/"))
+
+;; dired my project
+(defun rproject ()
+	(interactive)
+	(setq default-directory my-rails-project-dir)
+	(call-interactively 'find-file))
+
+;; dired my app
+(defun rapp ()
+	(interactive)
+	(setq default-directory my-rails-project-app)
+	(call-interactively 'find-file))
+
+;; dired my controller
+(defun rcontrollers ()
+	(interactive)
+	(setq default-directory my-rails-project-controllers)
+	(call-interactively 'find-file))
+
+;; dired my views
+(defun rviews ()
+	(interactive)
+	(setq default-directory my-rails-project-views)
+	(call-interactively 'find-file))
+
+;; dired my models
+(defun rmodels ()
+	(interactive)
+	(setq default-directory my-rails-project-models)
+	(call-interactively 'find-file))
