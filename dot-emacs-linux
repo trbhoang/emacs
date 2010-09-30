@@ -223,49 +223,6 @@ line instead."
       (toggle-scroll-bar nil))))
 
 ;; ==========================================================
-;; delete a whole line
-;; ==========================================================
-
-;; ===== Function to delete a line =====
-
-;; First define a variable which will store the previous column position
-(defvar previous-column nil "Save the column position")
-
-;; Define the nuke-line function. The line is killed, then the newline
-;; character is deleted. The column which the cursor was positioned at is then
-;; restored. Because the kill-line function is used, the contents deleted can
-;; be later restored by usibackward-delete-char-untabifyng the yank commands.
-(defun nuke-line()
-  "Kill an entire line, including the trailing newline character"
-  (interactive)
-
-  ;; Store the current column position, so it can later be restored for a more
-  ;; natural feel to the deletion
-  (setq previous-column (current-column))
-
-  ;; Now move to the end of the current line
-  (end-of-line)
-
-  ;; Test the length of the line. If it is 0, there is no need for a
-  ;; kill-line. All that happens in this case is that the new-line character
-  ;; is deleted.
-  (if (= (current-column) 0)
-    (delete-char 1)
-
-    ;; This is the 'else' clause. The current line being deleted is not zero
-    ;; in length. First remove the line by moving to its start and then
-    ;; killing, followed by deletion of the newline character, and then
-    ;; finally restoration of the column position.
-    (progn
-      (beginning-of-line)
-      (kill-line)
-      (delete-char 1)
-      (move-to-column previous-column))))
-
-;; Now bind the delete line function
-(global-set-key (kbd "C-;") 'nuke-line)
-
-;; ==========================================================
 
 (global-set-key [f12] 'quit-window)
       
@@ -279,20 +236,9 @@ line instead."
 (autoload 'linum-mode "linum" "mode for line numbers" t) 
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; productivity stuff; f9-f12 
-(global-set-key (kbd "C-c l") 'org-store-link)  ;; Links
-(global-set-key (kbd "C-c a") 'org-agenda)      ;; Agenda
-(global-set-key (kbd "C-c b") 'org-iswitchb)    ;; switch
-(global-set-key (kbd "<f5>")  'wl)              ;; Wanderlust
-(global-set-key (kbd "<f6>")  'org-agenda-list) ;; Agenda
-(global-set-key (kbd "<f7>")  'org-todo-list)   ;; todo-list (NextActions)
-(global-set-key (kbd "<f8>")  'remember)        ;; remember
-
-(global-set-key (kbd "C-c W") ;; wanderlust
-  (lambda()(interactive)(find-file wl-init-file))) 
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; remap M-x to M-;
+(global-set-key (kbd "M-;") 'icicle-execute-extended-command)
 
 ;; program shortcuts
 (defun .emacs ()
@@ -322,61 +268,71 @@ line instead."
 (setq my-rails-project-stylesheets (concat my-rails-project "public/stylesheets"))
 
 ;; dired my project
-(defun rproject ()
+(defun .rproject ()
 	(interactive)
 	(setq default-directory my-rails-project)
 	(call-interactively 'find-file))
 
 ;; dired my app
-(defun rapp ()
+(defun .rapp ()
 	(interactive)
 	(setq default-directory my-rails-project-app)
 	(call-interactively 'find-file))
 
 ;; dired my controller
-(defun rcontrollers ()
+(defun .rc ()
 	(interactive)
 	(setq default-directory my-rails-project-controllers)
 	(call-interactively 'find-file))
 
-;; dired my views
-(defun rviews ()
-	(interactive)
-	(setq default-directory my-rails-project-views)
-	(call-interactively 'find-file))
-
-;; dired my models
-(defun rmodels ()
-	(interactive)
-	(setq default-directory my-rails-project-models)
-	(call-interactively 'find-file))
-
 ;; dired my config
-(defun rconfig ()
+(defun .rcf ()
 	(interactive)
 	(setq default-directory my-rails-project-config)
 	(call-interactively 'find-file))
 
 ;; dired my db
-(defun rdb ()
+(defun .rdb ()
 	(interactive)
 	(setq default-directory my-rails-project-db)
 	(call-interactively 'find-file))
 
-;; dired my migrations
-(defun rmigrations ()
+;; open environment.rb
+(defun .renvironment.rb ()
 	(interactive)
-	(setq default-directory my-rails-project-migrations)
-	(call-interactively 'find-file))
+	(find-file (concat my-rails-project-config "environment.rb")))
 
 ;; dired my javascripts
-(defun rjavascripts ()
+(defun .rjavascripts ()
 	(interactive)
 	(setq default-directory my-rails-project-javascripts)
 	(call-interactively 'find-file))
 
+;; dired my models
+(defun .rm ()
+	(interactive)
+	(setq default-directory my-rails-project-models)
+	(call-interactively 'find-file))
+
+;; dired my migrations
+(defun .rmi ()
+	(interactive)
+	(setq default-directory my-rails-project-migrations)
+	(call-interactively 'find-file))
+
+;; open environment.rb
+(defun .rroutes.rb ()
+	(interactive)
+	(find-file (concat my-rails-project-config "routes.rb")))
+
+;; dired my views
+(defun .rviews ()
+	(interactive)
+	(setq default-directory my-rails-project-views)
+	(call-interactively 'find-file))
+
 ;; dired my stylesheets
-(defun rstylesheets ()
+(defun .rstylesheets ()
 	(interactive)
 	(setq default-directory my-rails-project-stylesheets)
 	(call-interactively 'find-file))
