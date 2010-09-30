@@ -167,6 +167,11 @@ line instead."
 (require 'tabbar)
 (tabbar-mode)
 
+;; Icicles Mode (minibuffer completion)
+(add-to-list 'load-path "~/.emacs.d/icicles/")
+(require 'icicles)
+(icy-mode 1)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
@@ -304,3 +309,79 @@ line instead."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; my rails project browser
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq my-rails-project "~/Projects/AdobeSPLC/adobe_splc/")
+(setq my-rails-project-app (concat my-rails-project "app/"))
+(setq my-rails-project-controllers (concat my-rails-project "app/controllers/"))
+(setq my-rails-project-views (concat my-rails-project "app/views/"))
+(setq my-rails-project-models (concat my-rails-project "app/models/"))
+(setq my-rails-project-config (concat my-rails-project "config/"))
+(setq my-rails-project-db (concat my-rails-project "db/"))
+(setq my-rails-project-migrations (concat my-rails-project "db/migrate/"))
+(setq my-rails-project-javascripts (concat my-rails-project "public/javascripts"))
+(setq my-rails-project-stylesheets (concat my-rails-project "public/stylesheets"))
+
+;; dired my project
+(defun rproject ()
+	(interactive)
+	(setq default-directory my-rails-project)
+	(call-interactively 'find-file))
+
+;; dired my app
+(defun rapp ()
+	(interactive)
+	(setq default-directory my-rails-project-app)
+	(call-interactively 'find-file))
+
+;; dired my controller
+(defun rcontrollers ()
+	(interactive)
+	(setq default-directory my-rails-project-controllers)
+	(call-interactively 'find-file))
+
+;; dired my views
+(defun rviews ()
+	(interactive)
+	(setq default-directory my-rails-project-views)
+	(call-interactively 'find-file))
+
+;; dired my models
+(defun rmodels ()
+	(interactive)
+	(setq default-directory my-rails-project-models)
+	(call-interactively 'find-file))
+
+;; dired my config
+(defun rconfig ()
+	(interactive)
+	(setq default-directory my-rails-project-config)
+	(call-interactively 'find-file))
+
+;; dired my db
+(defun rdb ()
+	(interactive)
+	(setq default-directory my-rails-project-db)
+	(call-interactively 'find-file))
+
+;; dired my migrations
+(defun rmigrations ()
+	(interactive)
+	(setq default-directory my-rails-project-migrations)
+	(call-interactively 'find-file))
+
+;; dired my javascripts
+(defun rjavascripts ()
+	(interactive)
+	(setq default-directory my-rails-project-javascripts)
+	(call-interactively 'find-file))
+
+;; dired my stylesheets
+(defun rstylesheets ()
+	(interactive)
+	(setq default-directory my-rails-project-stylesheets)
+	(call-interactively 'find-file))
+
