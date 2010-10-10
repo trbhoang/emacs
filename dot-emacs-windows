@@ -109,63 +109,58 @@ line instead."
 ;; some handy packages
 ;;
 ;; dired-details
-(require 'dired-details)
-(dired-details-install)
+;; (require 'dired-details)
+;; (dired-details-install)
 
 ;; dired-single
-(require 'dired-single)
-
-(defun my-dired-init ()
-  "Bunch of stuff to run for dired, either immediately or when it's loaded."
-  ;; <add other stuff here>
-  (define-key dired-mode-map [return] 'dired-single-buffer)
-  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-  (define-key dired-mode-map "^"
-  (function
-   (lambda nil (interactive) (dired-single-buffer "..")))))
-
-;; if dired's already loaded, then the keymap will be bound
-(if (boundp 'dired-mode-map)
-  ;; we're good to go; just add our bindings
-  (my-dired-init)
-  ;; it's not loaded yet, so add our bindings to the load-hook
-  (add-hook 'dired-load-hook 'my-dired-init))
+;; (require 'dired-single)									
 
 ;; hl-line: highlight the current line
 (when (fboundp 'global-hl-line-mode)
   (global-hl-line-mode t)) ;; turn it on for all modes by default
 
-;; yasnippet
-;; (add-to-list 'load-path
-;;                  "~/.emacs.d/yasnippet-0.6.1c")
-;;    (require 'yasnippet) ;; not yasnippet-bundle
-;;    (yas/initialize)
-;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
-(require 'yasnippet-bundle)
-(setq yas/trigger-key (kbd "C-c <kp-multiply>"))
-
 ;; org mode
 (add-to-list 'load-path "d:/Document/Projects/Emacs/org-mode/lisp")
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-(setq org-agenda-files (list "d:/Document/Org/work.org"
-                             "d:/Document/Org/school.org" 
-                             "d:/Document/Org/home.org"))
+
+;; yasnippet
+(add-to-list 'load-path
+                 "~/.emacs.d/yasnippet-0.6.1c")
+   (require 'yasnippet) ;; not yasnippet-bundle
+   (yas/initialize)
+   (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+(setq yas/prompt-functions '(yas/dropdown-prompt))
+
+;; (require 'yasnippet-bundle)
+;; (setq yas/trigger-key (kbd "C-c <kp-multiply>"))
+;; (setq yas/prompt-functions '(yas/dropdown-prompt yas/x-prompt)) 
 
 ;; auto complete mode
-(add-to-list 'load-path "~/.emacs.d/")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
 ;; Show 0.8 second later
 (setq ac-auto-show-menu 0.4)
 
+
 ;; Tabbar
-(require 'tabbar)
-(tabbar-mode)
+;; (require 'tabbar)
+;; (tabbar-mode)
+
+;; ido
+(setq confirm-nonexistent-file-or-buffer nil)
+(require 'ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(setq ido-enable-flex-matching t)
+(setq ido-create-new-buffer 'always)
+(setq ido-enable-tramp-completion nil)
+(setq ido-enable-last-directory-history nil)
+(setq ido-confirm-unique-completion nil) ;; wait for RET, even for unique?
+(setq ido-show-dot-for-dired t) ;; put . as the first item
+(setq ido-use-filename-at-point t) ;; prefer file names near point
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
@@ -173,14 +168,8 @@ line instead."
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
 
-;; switch to next tabbar buffer
-(global-set-key "\M-1" 'tabbar-forward-tab)
-
-;; switch to next tabbar group
-(global-set-key "\M-2" 'tabbar-forward-group)
-
 ;; sensitivelly adjust current window
-(global-set-key [f10]
+(global-set-key [f2]
 	(lambda ()
 		(interactive)
 		(let ((buf (window-buffer))
@@ -222,19 +211,6 @@ line instead."
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; productivity stuff; f9-f12 
-(global-set-key (kbd "C-c l") 'org-store-link)  ;; Links
-(global-set-key (kbd "C-c a") 'org-agenda)      ;; Agenda
-(global-set-key (kbd "C-c b") 'org-iswitchb)    ;; switch
-(global-set-key (kbd "<f5>")  'wl)              ;; Wanderlust
-(global-set-key (kbd "<f6>")  'org-agenda-list) ;; Agenda
-(global-set-key (kbd "<f7>")  'org-todo-list)   ;; todo-list (NextActions)
-(global-set-key (kbd "<f8>")  'remember)        ;; remember
-
-(global-set-key (kbd "C-c W") ;; wanderlust
-  (lambda()(interactive)(find-file wl-init-file))) 
-
-
 
 ;; program shortcuts
 (global-set-key (kbd "C-c E") ;; .emacs
@@ -245,12 +221,7 @@ line instead."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(tab-width 2))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my rails project browser
@@ -264,7 +235,7 @@ line instead."
 ;; dired my project
 (defun rproject ()
 	(interactive)
-	(setq default-directory my-rails-project-dir)
+	(setq default-directory my-rails-project)
 	(call-interactively 'find-file))
 
 ;; dired my app
