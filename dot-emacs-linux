@@ -111,28 +111,6 @@ line instead."
 ;;
 ;; some handy packages
 ;;
-;; dired-details
-(require 'dired-details)
-(dired-details-install)
-
-;; dired-single
-(require 'dired-single)
-
-(defun my-dired-init ()
-  "Bunch of stuff to run for dired, either immediately or when it's loaded."
-  ;; <add other stuff here>
-  (define-key dired-mode-map [return] 'dired-single-buffer)
-  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-  (define-key dired-mode-map "^"
-  (function
-   (lambda nil (interactive) (dired-single-buffer "..")))))
-
-;; if dired's already loaded, then the keymap will be bound
-(if (boundp 'dired-mode-map)
-  ;; we're good to go; just add our bindings
-  (my-dired-init)
-  ;; it's not loaded yet, so add our bindings to the load-hook
-  (add-hook 'dired-load-hook 'my-dired-init))
 
 ;; hl-line: highlight the current line
 (when (fboundp 'global-hl-line-mode)
@@ -149,13 +127,6 @@ line instead."
 ;; org mode
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
 (require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-(setq org-agenda-files (list "~/Org/work.org"
-                             "~/Org/school.org" 
-                             "~/Document/Org/home.org"))
 
 ;; auto-complete mode
 (add-to-list 'load-path "~/.emacs.d/")
@@ -164,13 +135,26 @@ line instead."
 (ac-config-default)
 
 ;; Tabbar
-(require 'tabbar)
-(tabbar-mode)
+;; (require 'tabbar)
+;; (tabbar-mode)
 
 ;; Icicles Mode (minibuffer completion)
-(add-to-list 'load-path "~/.emacs.d/icicles/")
-(require 'icicles)
-(icy-mode 1)
+;; (add-to-list 'load-path "~/.emacs.d/icicles/")
+;; (require 'icicles)
+;; (icy-mode 1)
+
+;; ido mode
+(setq confirm-nonexistent-file-or-buffer nil)
+(require 'ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(setq ido-enable-flex-matching t)
+(setq ido-create-new-buffer 'always)
+(setq ido-enable-tramp-completion nil)
+(setq ido-enable-last-directory-histroy nil)
+(setq ido-confirm-unique-completion nil)
+(setq ido-show-dot-for-dired t)
+(setq ido-use-filename-at-point t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
@@ -185,15 +169,8 @@ line instead."
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
 
-;; switch to next tabbar buffer
-(global-set-key "\M-1" 'tabbar-forward-tab)
-
-;; switch to next tabbar group
-(global-set-key "\M-2" 'tabbar-forward-group)
-
-
 ;; sensitivelly adjust current window
-(global-set-key [f10]
+(global-set-key [f2]
 	(lambda ()
 		(interactive)
 		(let ((buf (window-buffer))
@@ -236,10 +213,7 @@ line instead."
 (autoload 'linum-mode "linum" "mode for line numbers" t) 
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remap M-x to M-;
-(global-set-key (kbd "M-;") 'icicle-execute-extended-command)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; program shortcuts
 (defun .emacs ()
   (interactive)
