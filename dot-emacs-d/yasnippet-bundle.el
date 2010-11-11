@@ -136,6 +136,11 @@
 ;;   For more information and detailed usage, refer to the project page:
 ;;      http://code.google.com/p/yasnippet/
 
+;; My notes
+;; Snippet format
+;; (KEY TEMPLATE DESCRIPTION CONDITION GROUP EXPAND-ENV FILE KEYBINDING)
+
+
 ;;; Code:
 
 (require 'cl)
@@ -4321,17 +4326,12 @@ Use multiple times to bind different COMMANDs to the same KEY."
 		       ("y" ":yields: $0" ":yields: arguments (rdoc)" nil "general" nil nil nil)
 		       ("zip" "zip(${enums}) { |${row}| $0 }" "zip(...) { |...| ... }" nil "collections" nil nil nil)
 
-					 ;; for Rails
-					 ;; (KEY TEMPLATE NAME CONDITION GROUP EXPAND-ENV FILE KEYBINDING)
-					 ("bt" "belongs_to :${class}, :class_name => \"${ClassName}\", :foreign_key => \"${foreign_key}\"" "belongs_to :class, :class_name, :foreign_key" nil "active record" nil nil nil)
-					 ("bt" "belongs_to :${class}, :class_name => \"${ClassName}\"" "belongs_to :class, :class_name" nil "active record" nil nil nil)
-					 ("bt" "belongs_to :${class}" "belongs_to :class" nil "active record" nil nil nil)
-					 ("ho" "has_one :${class}, :class_name => \"${ClassName}\", :foreign_key => \"${foreign_key}\"" "has_one :class, :class_name, :foreign_key" nil "active record" nil nil nil)
-					 ("ho" "has_one :${class}, :class_name => \"${ClassName}\"" "has_one :class, :class_name" nil "active record" nil nil nil)
-					 ("ho" "has_one :${class}" "has_one :class" nil "active record" nil nil nil)
-					 ("hm" "has_many :${class}" "has_many : ..." nil "active record" nil nil nil)
-
+					 ;; My defined snippets for Ruby & Rails
+					 ;; (KEY TEMPLATE DESCRIPTION CONDITION GROUP EXPAND-ENV FILE KEYBINDING)
+					 ("belongs_to" "belongs_to :${class}" "belongs_to : ..." nil "active record" nil nil nil)
 					 ("flash" "flash[:${notice}] = \"${Text here...}\"" "flash[: ...] = \" ... \"" nil "flash" nil nil nil)
+					 ("def" "def ${method}\n\t$0\nend" "def ... end" nil "definition" nil nil nil)
+					 ("class" "class ${name}\n\t$0\nend" "class ... end" nil "definition" nil nil nil)
 					 )
 		     '(text-mode))
 
