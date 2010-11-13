@@ -125,16 +125,16 @@ line instead."
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 ;; yasnippet
-(add-to-list 'load-path
-                 "~/.emacs.d/yasnippet-0.6.1c")
-   (require 'yasnippet) ;; not yasnippet-bundle
-   (yas/initialize)
-   (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
-(setq yas/prompt-functions '(yas/dropdown-prompt))
+;; (add-to-list 'load-path
+;;                  "~/.emacs.d/yasnippet-0.6.1c")
+;;    (require 'yasnippet) ;; not yasnippet-bundle
+;;    (yas/initialize)
+;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+;; (setq yas/prompt-functions '(yas/dropdown-prompt))
 
-;; (require 'yasnippet-bundle)
+(require 'yasnippet-bundle)
 ;; (setq yas/trigger-key (kbd "C-c <kp-multiply>"))
-;; (setq yas/prompt-functions '(yas/dropdown-prompt yas/x-prompt)) 
+(setq yas/prompt-functions '(yas/dropdown-prompt yas/x-prompt)) 
 
 ;; auto complete mode
 (require 'auto-complete-config)
@@ -148,7 +148,7 @@ line instead."
 ;; (require 'tabbar)
 ;; (tabbar-mode)
 
-;; ido
+;; Ido
 (setq confirm-nonexistent-file-or-buffer nil)
 (require 'ido)
 (ido-mode 1)
@@ -161,12 +161,19 @@ line instead."
 (setq ido-show-dot-for-dired t) ;; put . as the first item
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 
+;; Auto pair
+(add-to-list 'load-path "/path/to/autopair") ;; comment if autopair.el is in standard load path 
+(require 'autopair)
+(autopair-global-mode) ;; enable autopair in all buffers 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
 
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
+
+;; navigate file and open in another window
+(global-set-key "\M-o" 'find-file-other-window)
 
 ;; sensitivelly adjust current window
 (global-set-key [f2]
@@ -190,20 +197,14 @@ line instead."
         (set-window-buffer (selected-window) buf)
         (delete-window win))))))
 
-;; toggle scroll bar
-(global-set-key [f11]
-  (lambda ()
-    (interactive)
-    (if (null (car (frame-current-scroll-bars)))
-      (toggle-scroll-bar t)
-      (toggle-scroll-bar nil))))
-
-(global-set-key [f12] 'quit-window)
-      
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "<delete>")    'delete-char)  ; delete == delete    
 (global-set-key (kbd "M-g")         'goto-line)    ; M-g  'goto-line
+
+(defun .emacs ()
+	(interactive)
+	(find-file "~/.emacs"))
       
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; programming
@@ -221,6 +222,7 @@ line instead."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(tab-width 2))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
