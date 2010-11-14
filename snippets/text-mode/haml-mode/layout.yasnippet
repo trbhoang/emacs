@@ -1,0 +1,98 @@
+# name: layout
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# group: For Rails
+# --
+!!!
+%html{html_attrs}
+  %head
+    %meta{'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'}
+    %link{:rel => "shortcut icon", :href => "/favicon.ico", :type => "image/x-icon"}
+    %title= "${1:Sample Project}"
+    = stylesheet_link_tag "${2:style.css}"
+    = javascript_include_tag "jquery.js", "jquery-ui.js", "${3:application.js}"
+    = yield :head
+  %body
+    #container
+			#header
+        .links
+          .right
+            - if user_signed_in?
+              - if current_user.admin?
+                = current_user.full_name
+              - else
+                = link_to current_user.full_name, user_url(current_user)
+              |
+              = link_to "Sign out", destroy_user_session_url
+            - else
+              = link_to "Sign in", new_user_session_url
+        .logo
+          = image_tag "adobe-lq.png"
+        .company
+          ADOBE SPLC
+      #navigation
+        #tabs
+          %ul.clearfix
+            - unless user_signed_in?
+              %li{:id => "tab-dashboard"}= link_to "Dashboard", dashboard_url
+            - else
+              %li= link_to "Home", home_url
+              %li{:id => "tab-dashboard"}= link_to "Dashboard", dashboard_url
+              %li= link_to "Products", products_url
+              %li= link_to "Tasks", task_management_url
+              - if current_user.admin?
+                %li= link_to "Questionnaires", questionnaires_url
+                %li= link_to "User Management", users_url
+                %li= link_to "ASSET Dashboard", asset_metrics_url
+                %li= link_to "Privacy Dashboard", privacy_dashboard_url
+                %li= link_to "Privacy Profiles", privacy_profiles_url
+                %li= link_to "Settings", notification_settings_url
+              - if current_user.asset?
+                %li= link_to "User Management", users_url
+                %li= link_to "ASSET Dashboard", asset_metrics_url
+                %li= link_to "Privacy Dashboard", privacy_dashboard_url
+                %li= link_to "Privacy Profiles", privacy_profiles_url
+              - if current_user.privacy?
+                %li= link_to "Privacy Dashboard", privacy_dashboard_url
+                %li= link_to "Privacy Profiles", privacy_profiles_url
+              - if current_user.legal?
+                %li= link_to "Privacy Profiles", privacy_profiles_url
+              - if current_user.regular?
+                %li= link_to "Questionnaires", user_questionnaire_assignments_url(current_user.id)
+      #main
+        - unless flash.blank?
+          .flash
+            - flash.each do |k, v|
+              - if k != :error_msgs
+                %div{:class => "box box-#{k} closeable"}
+                  = v
+            - if !flash[:error_msgs].blank? && flash[:error_msgs].is_a?(Array)
+              .box.box-error-msg
+                %ol
+                  - flash[:error_msgs].each do |msg|
+                    %li= msg
+              - flash.discard
+        = yield
+      #footer
+        Copyright @ 2010. Powered by Tech Propulsion Labs.
+
+:erb
+  <script>
+  $(function() {
+    $("<%= @current_tab %>").addClass("current");
+    $('table.metric tbody tr:odd').addClass('odd');
+    $('table.metric tbody tr:even').addClass('even');
+    // find closeable boxes and add a "close" action
+    $('.closeable').each(function(index){
+      $(this).prepend(
+        $('<a></a>')
+          .attr({href: '#', title: 'Close'})
+          .addClass('close')
+          .text('x')
+          .click(function() {
+            $(this).parent().fadeOut();
+            return false;
+          })
+      );
+    });
+  })
+  </script>
