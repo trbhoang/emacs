@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 (set-default-font "Monospace-9")
-(menu-bar-mode  nil)                       ;; show the menu...
+(menu-bar-mode -1)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
 (tool-bar-mode -1)                       ;; turn-off toolbar
 (setq-default indent-tabs-mode nil)
@@ -22,7 +22,7 @@
 (global-visual-line-mode 1)              ;; enable line wrapping
 ;; (global-linum-mode 1)                    ;; show line number
 
-(toggle-scroll-bar nil)                  ;; hide scroll bar
+(scroll-bar-mode nil)                    ;; hide scroll bar
 
 (setq fringe-mode '(1 . 0))              ;; emacs 22+
 (delete-selection-mode 1)                ;; delete the sel with a keyp
@@ -90,7 +90,7 @@ line instead."
 ;; (setq split-width-threshold 0)
 
 ;; default directory
-(setq default-directory "~/Projects/")
+(setq default-directory "~/Projects/AdobeSPLC/adobe_splc/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -111,18 +111,23 @@ line instead."
 ;;
 ;; some handy packages
 ;;
+;; dired-details
+(require 'dired-details)
+(dired-details-install)
 
 ;; hl-line: highlight the current line
 (when (fboundp 'global-hl-line-mode)
   (global-hl-line-mode t)) ;; turn it on for all modes by default
 
+
 ;; yasnippet
-;; (add-to-list 'load-path
-;;                  "~/.emacs.d/yasnippet-0.6.1c")
-;;    (require 'yasnippet) ;; not yasnippet-bundle
-;;    (yas/initialize)
-;;    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
-(require 'yasnippet-bundle)
+(add-to-list 'load-path
+                 "~/.emacs.d/yasnippet-0.6.1c")
+   (require 'yasnippet) ;; not yasnippet-bundle
+   (yas/initialize)
+   (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+
+;; (require 'yasnippet-bundle)             
 
 ;; org mode
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
@@ -156,6 +161,15 @@ line instead."
 (setq ido-show-dot-for-dired t)
 (setq ido-use-filename-at-point t)
 
+;; Numberring windows
+(require 'window-number)
+(window-number-mode t)
+(window-number-meta-mode t)
+
+;; Autopair mode
+(require 'autopair)
+(autopair-global-mode) ;; enable autopair in all buffers
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
@@ -168,6 +182,9 @@ line instead."
 
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
+
+;; navigate file and open in another window
+(global-set-key "\M-o" 'find-file-other-window)
 
 ;; sensitivelly adjust current window
 (global-set-key [f2]
@@ -191,17 +208,7 @@ line instead."
         (set-window-buffer (selected-window) buf)
         (delete-window win))))))
 
-;; toggle scroll bar
-(global-set-key [f11]
-  (lambda ()
-    (interactive)
-    (if (null (car (frame-current-scroll-bars)))
-      (toggle-scroll-bar t)
-      (toggle-scroll-bar nil))))
-
 ;; ==========================================================
-
-(global-set-key [f12] 'quit-window)
       
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
