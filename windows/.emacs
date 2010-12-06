@@ -177,8 +177,6 @@ line instead."
 (window-number-mode 1)
 (window-number-meta-mode 1)
 
-;; Dired Tree View
-(autoload 'dirtree "dirtree" "Add directory to tree view")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My key bindings
@@ -187,7 +185,7 @@ line instead."
 (global-set-key "\M-`" 'other-window)
 
 ;; navigate file and open in another window
-(global-set-key "\M-o" 'find-file-other-window)
+(global-set-key "\M-o" 'my-explorer)
 
 ;; my feature
 ;; sensitivelly adjust current window
@@ -233,6 +231,9 @@ line instead."
                         (set-window-buffer (selected-window) buf)
                         (set-window-buffer win (other-buffer))))))
                         
+(global-set-key [f6] 'previous-buffer)
+(global-set-key [f7] 'next-buffer)
+
 
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
@@ -300,3 +301,92 @@ line instead."
   (interactive)
   (setq default-directory my-rails-project-models)
   (call-interactively 'find-file))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; My new features
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; my current project path
+(setq my-current-project-path "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
+
+;; set my current project path
+(defun my-set-current-project-path (path)
+	(interactive)
+	(setq my-current-project-path path))
+
+;; my project path concatenation
+(defun my-concat-with-project-path (path)
+  (concat my-current-project-path path)
+  )
+
+;; my initial completion list 
+(setq my-completion-list nil)
+(add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
+(add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
+(add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
+(add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
+
+;; add a shortcut to completion list
+(defun my-add-a-shortcut (alias path)
+	(interactive "sAlias: \nsPath: ")
+	(add-to-list 'my-completion-list (cons alias (my-concat-with-project-path path))))
+
+;; remove a shortcut
+(defun my-remove-a-shortcut (alias)
+	(interactive "sShortcut Alias: ")
+	(setq my-completion-list (assq-delete-all alias my-completion-list)))
+
+;; my spliting window properly
+(defun my-split-window (w)
+	(let* ((left (nth 0 (window-inside-pixel-edges w)))
+				 (top (nth 1 (window-inside-pixel-edges w)))
+				 (right (nth 2 (window-inside-pixel-edges w)))
+				 (bottom (nth 3 (window-inside-pixel-edges w)))				 
+				 (width (- right left))
+				 (height (- bottom top)))
+		
+		(if (> width height)
+				(split-window w nil t)     ;; split horizontally
+			(split-window w nil nil)))  ;; split vertically
+)
+
+;; my creating new window
+(defun my-create-new-window ()
+  (my-split-window (get-largest-window)))
+											
+;; display the initial completion list and input prompt
+(defun my-navigator ()
+  ;; display the completion list
+  (interactive)
+  (let (selection path)
+    (setq w (get-largest-window))
+    (setq selection (ido-completing-read "Select: " my-completion-list))
+    (setq path (cdr (assoc selection my-completion-list)))
+
+    (if (file-directory-p path)
+        (progn
+          (setq default-directory path)
+          (ido-find-file))
+      (progn
+				(my-split-window w)
+        (find-file path)
+        )
+       )
+    )
+  )
+
+(defun my-explorer (request)
+	(interactive "sWhat do you want? ")
+  (cond ((string-match "\\(.+\\) model" request)
+         (find-file-other-window (concat my-current-project-path "app/models/" (match-string 1 request) ".rb")))
+        ((string-match "\\(.+\\) controller" request)
+         (my-create-new-window)
+         (find-file-other-window (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb")))
+        ((string-match "\\(models\\|views\\|controllers\\)" request)
+         (my-create-new-window)
+         (dired-other-window (concat my-current-project-path "app/" request))
+         )
+		)  
+  )
+
