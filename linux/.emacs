@@ -1,6 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
-(set-default-font "Monospace-9")
+(defconst MY-FONT "Monospace-9")
+(set-default-font MY-FONT)
 (menu-bar-mode -1)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
 (tool-bar-mode -1)                       ;; turn-off toolbar
@@ -53,6 +54,16 @@
 (setq inhibit-startup-message t          ;; don't show ...    
   inhibit-startup-echo-area-message t)   ;; ... startup messages
 (setq require-final-newline t)           ;; end files with a newline
+
+;; Set default font and frame size
+(setq default-frame-alist
+      `(
+        (menu-bar-lines . 0)
+        (vertical-scroll-bars . nil)
+        (tool-bar-lines . 0)
+        (fullscreen . maximized)
+        (font . ,MY-FONT)
+        ))
 
 ;; slick-copy: make copy-past a bit more intelligent
 ;; from: http://www.emacswiki.org/emacs/SlickCopy
