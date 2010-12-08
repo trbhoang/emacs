@@ -392,7 +392,7 @@ line instead."
            (find-file path))
           
           ((string-match "\\(.+\\) controller$" request)
-           (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) ".rb"))
+           (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb"))
            (my-create-new-window)
            (find-file path))
           
