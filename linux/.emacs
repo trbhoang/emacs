@@ -422,7 +422,7 @@ line instead."
 
 ;; my creating new window
 (defun my-create-new-window ()
-  (my-split-window (get-largest-window)))
+  (select-window (my-split-window (get-largest-window))))
 											
 ;; display the initial completion list and input prompt
 (defun my-navigator ()
@@ -451,12 +451,12 @@ line instead."
     (cond ((string-match "\\(.+\\) model$" request)
            (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
            (my-create-new-window)
-           (find-file-other-window path))
+           (find-file path))
           
           ((string-match "\\(.+\\) controller$" request)
            (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) ".rb"))
            (my-create-new-window)
-           (find-file-other-window path))
+           (find-file path))
           
           ((string-match "^\\(models\\|views\\|controllers\\)$" request)
            (setq path (concat my-current-project-path "app/" (match-string 1 request)))
@@ -497,7 +497,7 @@ line instead."
           ((string-match "^.emacs$" request)
            (setq path "~/.emacs")
            (my-create-new-window)
-           (find-file-other-window path))
+           (find-file path))
     
           ((string-match "^shell$" request)
            (setq default-directory my-current-project-path)
