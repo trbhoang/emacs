@@ -292,70 +292,6 @@ line instead."
 	(setq default-directory my-rails-project)
 	(call-interactively 'find-file))
 
-;; dired my app
-(defun .rapp ()
-	(interactive)
-	(setq default-directory my-rails-project-app)
-	(call-interactively 'find-file))
-
-;; dired my controller
-(defun .rc ()
-	(interactive)
-	(setq default-directory my-rails-project-controllers)
-	(call-interactively 'find-file))
-
-;; dired my config
-(defun .rcf ()
-	(interactive)
-	(setq default-directory my-rails-project-config)
-	(call-interactively 'find-file))
-
-;; dired my db
-(defun .rdb ()
-	(interactive)
-	(setq default-directory my-rails-project-db)
-	(call-interactively 'find-file))
-
-;; open environment.rb
-(defun .renvironment.rb ()
-	(interactive)
-	(find-file (concat my-rails-project-config "environment.rb")))
-
-;; dired my javascripts
-(defun .rjavascripts ()
-	(interactive)
-	(setq default-directory my-rails-project-javascripts)
-	(call-interactively 'find-file))
-
-;; dired my models
-(defun .rm ()
-	(interactive)
-	(setq default-directory my-rails-project-models)
-	(call-interactively 'find-file))
-
-;; dired my migrations
-(defun .rmi ()
-	(interactive)
-	(setq default-directory my-rails-project-migrations)
-	(call-interactively 'find-file))
-
-;; open environment.rb
-(defun .rroutes.rb ()
-	(interactive)
-	(find-file (concat my-rails-project-config "routes.rb")))
-
-;; dired my views
-(defun .rviews ()
-	(interactive)
-	(setq default-directory my-rails-project-views)
-	(call-interactively 'find-file))
-
-;; dired my stylesheets
-(defun .rstylesheets ()
-	(interactive)
-	(setq default-directory my-rails-project-stylesheets)
-	(call-interactively 'find-file))
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -391,10 +327,31 @@ line instead."
 
 ;; my initial completion list 
 (setq my-completion-list nil)
-(add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
-(add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
-(add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
-(add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
+;; (add-to-list 'my-completion-list (cons "a" "a"))
+;; (add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
+;; (add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
+;; (add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
+;; (add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
+(add-to-list 'my-completion-list (cons "model" "model"))
+(add-to-list 'my-completion-list (cons "models" "models"))
+(add-to-list 'my-completion-list (cons "controller" "controller"))
+(add-to-list 'my-completion-list (cons "controllers" "controllers"))
+(add-to-list 'my-completion-list (cons "views" "views"))
+(add-to-list 'my-completion-list (cons "plugins" "plugins"))
+(add-to-list 'my-completion-list (cons "project" "project"))
+(add-to-list 'my-completion-list (cons "change project" "change project"))
+(add-to-list 'my-completion-list (cons "config" "config"))
+(add-to-list 'my-completion-list (cons "db" "db"))
+(add-to-list 'my-completion-list (cons "notes" "notes"))
+(add-to-list 'my-completion-list (cons ".emacs" "emacs"))
+(add-to-list 'my-completion-list (cons "scratch" "scratch"))
+(add-to-list 'my-completion-list (cons "shell" "shell"))
+(add-to-list 'my-completion-list (cons "save wins" "save wins"))
+(add-to-list 'my-completion-list (cons "restore wins" "restore wins"))
+(add-to-list 'my-completion-list (cons "del win" "del win"))
+(add-to-list 'my-completion-list (cons "make frame" "make frame"))
+(add-to-list 'my-completion-list (cons "pwd" "pwd"))
+
 
 ;; add a shortcut to completion list
 (defun my-add-a-shortcut (alias path)
@@ -448,7 +405,7 @@ line instead."
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
   (let (path)
-    (cond ((string-match "\\(.+\\) model$" request)
+    (cond ((string-match "\\(.+\\) model$" request)           
            (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
            (my-create-new-window)
            (find-file path))
@@ -533,7 +490,7 @@ line instead."
           ((string-match "^pwd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
-          ((string-match "^ch prj$" request)
+          ((string-match "^change prj$" request)
            (call-interactively 'my-set-current-project-path))
           
           )
