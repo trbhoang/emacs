@@ -187,53 +187,6 @@ line instead."
 ;; navigate file and open in another window
 (global-set-key "\M-o" 'my-explorer)
 
-;; my feature
-;; sensitivelly adjust current window
-(global-set-key [f2]
-                (lambda ()
-                  (interactive)
-                  (let ((buf (window-buffer))
-                        (win (selected-window))
-                        (largest-win (get-largest-window)))
-                    (unless (equal win largest-win)
-                      (let* ((left (nth 0 (window-inside-pixel-edges largest-win)))
-                             (top (nth 1 (window-inside-pixel-edges largest-win)))
-                             (right (nth 2 (window-inside-pixel-edges largest-win)))
-                             (bottom (nth 3 (window-inside-pixel-edges largest-win)))
-                             (width (- right left))
-                             (height (- bottom top)))
-                        (if (> width height)
-                            (progn
-                              (select-window (split-window largest-win nil t)))     ;; split horizontally
-                          (progn
-                            (select-window (split-window largest-win nil nil))))  ;; split vertically
-                        (set-window-buffer (selected-window) buf)
-                        (delete-window win))))))
-
-;; my feature
-;; create a new window and move current buffer to
-(global-set-key [f5]
-								(lambda ()
-									(interactive)
-									(let ((buf (window-buffer))
-												(win (selected-window)))
-                      (let* ((left (nth 0 (window-inside-pixel-edges win)))
-                             (top (nth 1 (window-inside-pixel-edges win)))
-                             (right (nth 2 (window-inside-pixel-edges win)))
-                             (bottom (nth 3 (window-inside-pixel-edges win)))
-                             (width (- right left))
-                             (height (- bottom top)))
-                        (if (> width height)
-                            (progn
-                              (select-window (split-window win nil t)))     ;; split horizontally
-                          (progn
-                            (select-window (split-window win nil nil))))  ;; split vertically
-                        (set-window-buffer (selected-window) buf)
-                        (set-window-buffer win (other-buffer))))))
-                        
-(global-set-key [f6] 'previous-buffer)
-(global-set-key [f7] 'next-buffer)
-
 
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
@@ -307,9 +260,13 @@ line instead."
 ;; My new features
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(global-set-key [f2] 'my-zooming)
+(global-set-key [f5] 'my-move-current-buffer-to-other-window)
+
 ;; my current project path
 (defvar my-current-project-path "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
-(defvar my-current-window-config)
+(defvar my-saved-window-config)
+(defvar my-current-zoom nil)
 
 ;; set my current project path
 (defun my-set-current-project-path (path)
@@ -318,12 +275,12 @@ line instead."
 
 ;; my save windows configuration
 (defun my-save-windows-config ()
-  (setq my-current-window-config (current-window-configuration))
+  (setq my-saved-window-config (current-window-configuration))
   )
 
 ;; my restore saved windows configuration
 (defun my-restore-windows-configuration ()
-  (set-window-configuration my-current-window-config)
+  (set-window-configuration my-saved-window-config)
   )
 
 ;; my project path concatenation
@@ -331,6 +288,52 @@ line instead."
   (concat my-current-project-path path)
   )
 
+;; sensitivelly adjust current window
+(defun my-sensitively-adjust-current-window ()
+  (interactive)
+  (let ((buf (window-buffer))
+        (win (selected-window))
+        (largest-win (get-largest-window)))
+    (unless (equal win largest-win)
+      (let* ((left (nth 0 (window-inside-pixel-edges largest-win)))
+             (top (nth 1 (window-inside-pixel-edges largest-win)))
+             (right (nth 2 (window-inside-pixel-edges largest-win)))
+             (bottom (nth 3 (window-inside-pixel-edges largest-win)))
+             (width (- right left))
+             (height (- bottom top)))
+        (if (> width height)
+            (progn
+              (select-window (split-window largest-win nil t)))     ;; split horizontally
+          (progn
+            (select-window (split-window largest-win nil nil))))  ;; split vertically
+        (set-window-buffer (selected-window) buf)
+        (delete-window win)))))
+
+;; create a new window and move current buffer to
+(defun my-move-current-buffer-to-other-window ()
+  (interactive)
+  (let ((buf (window-buffer))
+        (win (selected-window)))
+        (set-window-buffer (my-create-new-window) buf)
+        (set-window-buffer win (other-buffer))
+        )
+  )
+
+(defun my-zooming ()
+  (interactive)
+  (if my-current-zoom
+      (progn
+        (my-restore-windows-configuration)
+        (setq my-current-zoom nil)
+        (setq my-saved-window-config nil) ;; reset window config
+				)
+		(progn
+			(my-save-windows-config) 
+			(delete-other-windows)
+			(setq my-current-zoom t)
+		)
+	))
+                          
 ;; my initial completion list 
 (setq my-completion-list nil)
 ;; (add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))

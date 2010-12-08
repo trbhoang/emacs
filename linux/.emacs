@@ -298,12 +298,14 @@ line instead."
 ;; My new features
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; navigate file and open in another window
 (global-set-key "\M-o" 'my-explorer)
+(global-set-key [f2] 'my-zooming)
+(global-set-key [f5] 'my-move-current-buffer-to-other-window)
 
 ;; my current project path
 (defvar my-current-project-path "~/Projects/MagooshExam/magoosh_exam/")
-(defvar my-current-window-config)
+(defvar my-saved-window-config nil)
+(defvar my-current-zoom nil)
 
 ;; set my current project path
 (defun my-set-current-project-path (path)
@@ -312,12 +314,17 @@ line instead."
 
 ;; my save windows configuration
 (defun my-save-windows-config ()
-  (setq my-current-window-config (current-window-configuration))
+  (setq my-saved-window-config (current-window-configuration))
   )
 
 ;; my restore saved windows configuration
 (defun my-restore-windows-configuration ()
-  (set-window-configuration my-current-window-config)
+  (set-window-configuration my-saved-window-config)
+  )
+
+;; my reset saved windows configuration
+(defun my-reset-saved-window-config ()
+  (setq my-saved-window-config nil)
   )
 
 ;; my project path concatenation
@@ -325,6 +332,52 @@ line instead."
   (concat my-current-project-path path)
   )
 
+;; sensitivelly adjust current window
+(defun my-sensitively-adjust-current-window ()
+  (interactive)
+  (let ((buf (window-buffer))
+        (win (selected-window))
+        (largest-win (get-largest-window)))
+    (unless (equal win largest-win)
+      (let* ((left (nth 0 (window-inside-pixel-edges largest-win)))
+             (top (nth 1 (window-inside-pixel-edges largest-win)))
+             (right (nth 2 (window-inside-pixel-edges largest-win)))
+             (bottom (nth 3 (window-inside-pixel-edges largest-win)))
+             (width (- right left))
+             (height (- bottom top)))
+        (if (> width height)
+            (progn
+              (select-window (split-window largest-win nil t)))     ;; split horizontally
+          (progn
+            (select-window (split-window largest-win nil nil))))  ;; split vertically
+        (set-window-buffer (selected-window) buf)
+        (delete-window win)))))
+
+;; create a new window and move current buffer to
+(defun my-move-current-buffer-to-other-window ()
+  (interactive)
+  (let ((buf (window-buffer))
+        (win (selected-window)))
+        (set-window-buffer (my-create-new-window) buf)
+        (set-window-buffer win (other-buffer))
+        )
+  )
+
+(defun my-zooming ()
+  (interactive)
+  (if my-current-zoom
+      (progn
+        (my-restore-windows-configuration)
+        (setq my-current-zoom nil)
+        (my-reset-saved-window-config) ;; reset window config
+				)
+		(progn
+			(my-save-windows-config) 
+			(delete-other-windows)
+			(setq my-current-zoom t)
+		)
+	))
+                          
 ;; my initial completion list 
 (setq my-completion-list nil)
 ;; (add-to-list 'my-completion-list (cons "a" "a"))
