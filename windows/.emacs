@@ -184,9 +184,6 @@ line instead."
 ;; switch to next window
 (global-set-key "\M-`" 'other-window)
 
-;; navigate file and open in another window
-(global-set-key "\M-o" 'my-explorer)
-
 
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
@@ -260,12 +257,13 @@ line instead."
 ;; My new features
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(global-set-key "\M-o" 'my-explorer)
 (global-set-key [f2] 'my-zooming)
 (global-set-key [f5] 'my-move-current-buffer-to-other-window)
 
 ;; my current project path
 (defvar my-current-project-path "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
-(defvar my-saved-window-config)
+(defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
 
 ;; set my current project path
@@ -280,7 +278,14 @@ line instead."
 
 ;; my restore saved windows configuration
 (defun my-restore-windows-configuration ()
-  (set-window-configuration my-saved-window-config)
+	(if my-saved-window-config
+			(set-window-configuration my-saved-window-config)
+		)
+  )
+
+;; my reset saved windows configuration
+(defun my-reset-saved-window-config ()
+  (setq my-saved-window-config nil)
   )
 
 ;; my project path concatenation
@@ -321,11 +326,15 @@ line instead."
 
 (defun my-zooming ()
   (interactive)
+  (if (eq (selected-window) (next-window))
+      (setq my-current-zoom t)
+    (setq my-current-zoom nil)
+      )
   (if my-current-zoom
       (progn
         (my-restore-windows-configuration)
         (setq my-current-zoom nil)
-        (setq my-saved-window-config nil) ;; reset window config
+        (my-reset-saved-window-config) ;; reset window config
 				)
 		(progn
 			(my-save-windows-config) 

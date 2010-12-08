@@ -319,7 +319,9 @@ line instead."
 
 ;; my restore saved windows configuration
 (defun my-restore-windows-configuration ()
-  (set-window-configuration my-saved-window-config)
+	(if my-saved-window-config
+			(set-window-configuration my-saved-window-config)
+		)
   )
 
 ;; my reset saved windows configuration
@@ -363,8 +365,13 @@ line instead."
         )
   )
 
+
 (defun my-zooming ()
   (interactive)
+  (if (eq (selected-window) (next-window))
+      (setq my-current-zoom t)
+    (setq my-current-zoom nil)
+      )
   (if my-current-zoom
       (progn
         (my-restore-windows-configuration)
