@@ -493,6 +493,14 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto notes
+          ((string-match "^notes$" request)
+           (setq path "~/Projects/Notes/")
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+          
           ;; other commands
           ((string-match "^.emacs$" request)
            (setq path "~/.emacs")
@@ -525,8 +533,7 @@ line instead."
           ((string-match "^pwd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
-          ((string-match "^change prj$" request)
-           (message "change prj")
+          ((string-match "^ch prj$" request)
            (call-interactively 'my-set-current-project-path))
           
           )
