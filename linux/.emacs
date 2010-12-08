@@ -514,6 +514,14 @@ line instead."
           ((string-match "^restore wins$" request)
            (my-restore-windows-configuration))
 
+          ((string-match "^del win$" request)
+           (delete-window))
+
+          ((string-match "^make frame$" request)
+           (setq buf (window-buffer))
+           (delete-window)
+           (switch-to-buffer-other-frame buf))
+          
           ((string-match "^pwd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
