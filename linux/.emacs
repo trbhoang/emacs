@@ -498,7 +498,11 @@ line instead."
            (setq path "~/.emacs")
            (my-create-new-window)
            (find-file path))
-    
+
+          ((string-match "^scratch$" request)
+           (my-create-new-window)
+           (switch-to-buffer "*scratch*"))
+
           ((string-match "^shell$" request)
            (setq default-directory my-current-project-path)
            (my-create-new-window)
