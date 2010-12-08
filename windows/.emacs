@@ -308,12 +308,23 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; my current project path
-(setq my-current-project-path "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
+(defvar my-current-project-path "d:/Document/Projects/Adobe_SPLC/adobe_splc/")
+(defvar my-current-window-config)
 
 ;; set my current project path
 (defun my-set-current-project-path (path)
-	(interactive)
+	(interactive "sNew project path: ")
 	(setq my-current-project-path path))
+
+;; my save windows configuration
+(defun my-save-windows-config ()
+  (setq my-current-window-config (current-window-configuration))
+  )
+
+;; my restore saved windows configuration
+(defun my-restore-windows-configuration ()
+  (set-window-configuration my-current-window-config)
+  )
 
 ;; my project path concatenation
 (defun my-concat-with-project-path (path)
@@ -322,10 +333,10 @@ line instead."
 
 ;; my initial completion list 
 (setq my-completion-list nil)
-(add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
-(add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
-(add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
-(add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
+;; (add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
+;; (add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
+;; (add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
+;; (add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
 
 ;; add a shortcut to completion list
 (defun my-add-a-shortcut (alias path)
@@ -353,7 +364,7 @@ line instead."
 
 ;; my creating new window
 (defun my-create-new-window ()
-  (my-split-window (get-largest-window)))
+  (select-window (my-split-window (get-largest-window))))
 											
 ;; display the initial completion list and input prompt
 (defun my-navigator ()
@@ -376,17 +387,137 @@ line instead."
     )
   )
 
+
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
-  (cond ((string-match "\\(.+\\) model" request)
-         (find-file-other-window (concat my-current-project-path "app/models/" (match-string 1 request) ".rb")))
-        ((string-match "\\(.+\\) controller" request)
-         (my-create-new-window)
-         (find-file-other-window (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb")))
-        ((string-match "\\(models\\|views\\|controllers\\)" request)
-         (my-create-new-window)
-         (dired-other-window (concat my-current-project-path "app/" request))
-         )
-		)  
+  (let (path)
+    (cond ((string-match "\\(.+\\) model$" request)           
+           (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
+           (my-create-new-window)
+           (find-file path))
+          
+          ((string-match "\\(.+\\) controller$" request)
+           (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb"))
+           (my-create-new-window)
+           (find-file path))
+          
+          ((string-match "^\\(models\\|views\\|controllers\\)$" request)
+           (setq path (concat my-current-project-path "app/" (match-string 1 request)))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+          
+          ((string-match "^plugins$" request)
+           (setq path (concat my-current-project-path "vendor/" (match-string 1 request)))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ((string-match "^prj$" request)
+           (setq path my-current-project-path)
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ((string-match "^config$" request)
+           (setq path (concat my-current-project-path "config/"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ((string-match "^db$" request)
+           (setq path (concat my-current-project-path "db/"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ;; goto notes
+          ((string-match "^notes$" request)
+           (setq path "d:/Document/Notes/")
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ;; goto todos
+          ((string-match "^todos$" request)
+           (setq path "d:/Document/Notes/Tasks.org")
+           (my-create-new-window)
+           (find-file path))
+
+          ;; other commands
+          ((string-match "^.emacs$" request)
+           (setq path "~/.emacs")
+           (my-create-new-window)
+           (find-file path))
+
+          ((string-match "^scratch$" request)
+           (my-create-new-window)
+           (switch-to-buffer "*scratch*"))
+
+          ((string-match "^shell$" request)
+           (setq default-directory my-current-project-path)
+           (my-create-new-window)
+           (eshell))
+          
+          ((string-match "^save wins$" request)
+           (my-save-windows-config))
+
+          ((string-match "^restore wins$" request)
+           (my-restore-windows-configuration))
+
+          ((string-match "^del win$" request)
+           (delete-window))
+
+          ((string-match "^make frame$" request)
+           (setq buf (window-buffer))
+           (delete-window)
+           (switch-to-buffer-other-frame buf))
+          
+          ((string-match "^pwd$" request)
+           (message "Your current project path: %s" my-current-project-path))
+
+          ((string-match "^change prj$" request)
+           (call-interactively 'my-set-current-project-path))
+
+          ((string-match "^shortcuts$" request)
+           (setq buf (get-buffer-create "*my shortcuts*"))
+           (set-buffer buf)
+           (setq buffer-read-only nil)
+           ;; add shortcut descriptions to this buffer
+           (insert "1.  prj\n")
+           (insert "2.  models\n")
+           (insert "3.  views\n")
+           (insert "4.  controllers\n")
+           (insert "5.  config\n")
+           (insert "6.  db\n")
+           (insert "7.  plugins\n")
+           (insert "8.  xxx model\n")
+           (insert "9.  xxx controller\n")
+           (insert "10. change prj\n\n")
+
+           (insert "11. notes\n")
+           (insert "12. todos\n")
+           (insert "13. .emacs\n")
+           (insert "14. scratch\n")
+           (insert "15. shell\n")
+           (insert "16. save wins\n")
+           (insert "17. restore wins\n")
+           (insert "18. del win\n")
+           (insert "19. make frame\n")
+           (insert "20. pwd\n")
+           (insert "21. shortcuts\n")
+           
+           (setq buffer-read-only t)
+           (my-create-new-window)
+           (switch-to-buffer buf)
+           )
+          )
+    )
   )
 

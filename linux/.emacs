@@ -439,6 +439,12 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
           
+          ;; goto todos
+          ((string-match "^todos$" request)
+           (setq path "~/Projects/Notes/Tasks.org")
+           (my-create-new-window)
+           (find-file path))
+
           ;; other commands
           ((string-match "^.emacs$" request)
            (setq path "~/.emacs")
@@ -491,15 +497,16 @@ line instead."
            (insert "10. change prj\n\n")
 
            (insert "11. notes\n")
-           (insert "12. .emacs\n")
-           (insert "13. scratch\n")
-           (insert "14. shell\n")
-           (insert "15. save wins\n")
-           (insert "16. restore wins\n")
-           (insert "17. del win\n")
-           (insert "18. make frame\n")
-           (insert "19. pwd\n")
-           (insert "20. shortcuts\n")
+           (insert "12. todos\n")
+           (insert "13. .emacs\n")
+           (insert "14. scratch\n")
+           (insert "15. shell\n")
+           (insert "16. save wins\n")
+           (insert "17. restore wins\n")
+           (insert "18. del win\n")
+           (insert "19. make frame\n")
+           (insert "20. pwd\n")
+           (insert "21. shortcuts\n")
            
            (setq buffer-read-only t)
            (my-create-new-window)
