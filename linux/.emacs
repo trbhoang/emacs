@@ -101,7 +101,7 @@ line instead."
 ;; (setq split-width-threshold 0)
 
 ;; default directory
-(setq default-directory "~/Projects/AdobeSPLC/adobe_splc/")
+(setq default-directory "~/Projects/")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -173,11 +173,11 @@ line instead."
 (setq ido-use-filename-at-point t)
 
 ;; Numberring windows
-(require 'window-number)
-(window-number-mode t)
-(window-number-meta-mode t)
+;; (require 'window-number)
+;; (window-number-mode t)
+;; (window-number-meta-mode t)
 
-;; Autopair mode
+;; autopair mode
 (require 'autopair)
 (autopair-global-mode) ;; enable autopair in all buffers
 
@@ -187,64 +187,6 @@ line instead."
 ;; haml mode
 (add-to-list 'load-path "~/.emacs.d/haml-mode")
 (require 'haml-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; My key bindings
-
-;; switch to next window
-(global-set-key "\M-`" 'other-window)
-(global-set-key "\C-x\C-f"
-                (lambda ()
-                  (interactive)
-                  (setq default-directory my-current-project-path)
-                  (my-create-new-window)
-                  (ido-find-file)
-                  ))
-
-;; sensitivelly adjust current window
-(global-set-key [f2]
-	(lambda ()
-		(interactive)
-		(let ((buf (window-buffer))
-					(win (selected-window))
-					(largest-win (get-largest-window)))
-			(unless (equal win largest-win)
-        (let* ((left (nth 0 (window-inside-pixel-edges largest-win)))
-              (top (nth 1 (window-inside-pixel-edges largest-win)))
-              (right (nth 2 (window-inside-pixel-edges largest-win)))
-              (bottom (nth 3 (window-inside-pixel-edges largest-win)))
-              (width (- right left))
-              (height (- bottom top)))
-				(if (> width height)
-						(progn
-						(select-window (split-window largest-win nil t)))     ;; split horizontally
-					(progn
-						(select-window (split-window largest-win nil nil))))  ;; split vertically
-        (set-window-buffer (selected-window) buf)
-        (delete-window win))))))
-
-;; my feature
-;; create a new window and move current buffer to
-(global-set-key [f5]
-								(lambda ()
-									(interactive)
-									(let ((buf (window-buffer))
-												(win (selected-window)))
-                      (let* ((left (nth 0 (window-inside-pixel-edges win)))
-                             (top (nth 1 (window-inside-pixel-edges win)))
-                             (right (nth 2 (window-inside-pixel-edges win)))
-                             (bottom (nth 3 (window-inside-pixel-edges win)))
-                             (width (- right left))
-                             (height (- bottom top)))
-                        (if (> width height)
-                            (progn
-                              (select-window (split-window win nil t)))     ;; split horizontally
-                          (progn
-                            (select-window (split-window win nil nil))))  ;; split vertically
-                        (set-window-buffer (selected-window) buf)
-                        (set-window-buffer win (other-buffer))))))
-                        
-
 
 ;; ==========================================================
       
@@ -258,49 +200,22 @@ line instead."
 (autoload 'linum-mode "linum" "mode for line numbers" t) 
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; program shortcuts
-(defun .emacs ()
-  (interactive)
-  (find-file "~/.emacs"))
-
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(tab-width 2))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; my rails project browser
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq my-rails-project "~/Projects/AdobeSPLC/adobe_splc/")
-(setq my-rails-project-app (concat my-rails-project "app/"))
-(setq my-rails-project-controllers (concat my-rails-project "app/controllers/"))
-(setq my-rails-project-views (concat my-rails-project "app/views/"))
-(setq my-rails-project-models (concat my-rails-project "app/models/"))
-(setq my-rails-project-config (concat my-rails-project "config/"))
-(setq my-rails-project-db (concat my-rails-project "db/"))
-(setq my-rails-project-migrations (concat my-rails-project "db/migrate/"))
-(setq my-rails-project-javascripts (concat my-rails-project "public/javascripts"))
-(setq my-rails-project-stylesheets (concat my-rails-project "public/stylesheets"))
-
-;; dired my project
-(defun .rproject ()
-	(interactive)
-	(setq default-directory my-rails-project)
-	(call-interactively 'find-file))
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My new features
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(global-set-key "\M-`" 'other-window)
+(global-set-key "\M-1" 'delete-window)
+(global-set-key "\M-2" 'my-move-current-buffer-to-other-window)
 (global-set-key "\M-o" 'my-explorer)
+
 (global-set-key [f2] 'my-zooming)
-(global-set-key [f5] 'my-move-current-buffer-to-other-window)
+(global-set-key [f5] 'my-refresh-buffer)
+
+(defun .emacs ()
+  (interactive)
+  (find-file "~/.emacs"))
 
 ;; my current project path
 (defvar my-current-project-path "~/Projects/MagooshExam/magoosh_exam/")
@@ -385,6 +300,13 @@ line instead."
 		)
 	))
                           
+
+(defun my-refresh-buffer ()
+	(interactive)
+	(revert-buffer t (not (buffer-modified-p)) t)
+	)
+
+
 ;; my initial completion list 
 (setq my-completion-list nil)
 ;; (add-to-list 'my-completion-list (cons "a" "a"))
@@ -446,23 +368,37 @@ line instead."
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
   (let (path)
-    (cond ((string-match "\\(.+\\) model$" request)           
+    (cond ((string-match "\\(.+\\) mod$" request)           
            (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
            (my-create-new-window)
            (find-file path))
           
-          ((string-match "\\(.+\\) controller$" request)
+          ((string-match "\\(.+\\) con$" request)
            (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb"))
            (my-create-new-window)
            (find-file path))
           
-          ((string-match "^\\(models\\|views\\|controllers\\)$" request)
-           (setq path (concat my-current-project-path "app/" (match-string 1 request)))
+          ((string-match "^mos$" request)
+           (setq path (concat my-current-project-path "app/models"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
           
+          ((string-match "^vis$" request)
+           (setq path (concat my-current-project-path "app/views"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+          
+          ((string-match "^cos$" request)
+           (setq path (concat my-current-project-path "app/views"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+                    
           ((string-match "^plugins$" request)
            (setq path (concat my-current-project-path "vendor/" (match-string 1 request)))
            (my-create-new-window)
@@ -470,14 +406,14 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
-          ((string-match "^prj$" request)
+          ((string-match "^pro$" request)
            (setq path my-current-project-path)
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
-          ((string-match "^config$" request)
+          ((string-match "^conf$" request)
            (setq path (concat my-current-project-path "config/"))
            (my-create-new-window)
            (setq default-directory path)
@@ -537,7 +473,7 @@ line instead."
           ((string-match "^pwd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
-          ((string-match "^change prj$" request)
+          ((string-match "^change pro$" request)
            (call-interactively 'my-set-current-project-path))
 
           ((string-match "^shortcuts$" request)
@@ -572,6 +508,12 @@ line instead."
            (my-create-new-window)
            (switch-to-buffer buf)
            )
+
+          ((string-match "^rem$" request)
+           (setq path "d:/Document/Notes/Remember.txt")
+           (my-create-new-window)
+           (find-file path))
+          
           )
     )
   )
