@@ -393,7 +393,7 @@ line instead."
            (setq default-directory my-current-project-path))
           
           ((string-match "^cs$" request)
-           (setq path (concat my-current-project-path "app/views"))
+           (setq path (concat my-current-project-path "app/controllers"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
@@ -427,6 +427,21 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ((string-match "^js$" request)
+           (setq path (concat my-current-project-path "public/javascripts/"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ((string-match "^styles$" request)
+           (setq path (concat my-current-project-path "public/stylesheets/"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          
           ;; goto notes
           ((string-match "^notes$" request)
            (setq path "~/Projects/Notes/")
@@ -510,7 +525,7 @@ line instead."
            )
 
           ((string-match "^rem$" request)
-           (setq path "d:/Document/Notes/Remember.txt")
+           (setq path "~/Projects/Notes/Remember.txt")
            (my-create-new-window)
            (find-file path))
           
