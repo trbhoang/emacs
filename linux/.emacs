@@ -219,6 +219,7 @@ line instead."
 
 ;; my current project path
 (defvar my-current-project-path "~/Projects/MagooshExam/magoosh_exam/")
+(defvar my-projects-path "~/Projects/")
 (defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
 
@@ -406,7 +407,7 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
-          ((string-match "^pro$" request)
+          ((string-match "^prj$" request)
            (setq path my-current-project-path)
            (my-create-new-window)
            (setq default-directory path)
@@ -434,7 +435,7 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
-          ((string-match "^styles$" request)
+          ((string-match "^stls$" request)
            (setq path (concat my-current-project-path "public/stylesheets/"))
            (my-create-new-window)
            (setq default-directory path)
@@ -488,9 +489,24 @@ line instead."
           ((string-match "^pwd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
-          ((string-match "^change pro$" request)
+          ((string-match "^change prj$" request)
            (call-interactively 'my-set-current-project-path))
 
+          ((string-match "^prjs$" request)
+           (setq path my-projects-path)
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ((string-match "^~$" request)
+           (setq path "~/")
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          
           ((string-match "^shortcuts$" request)
            (setq buf (get-buffer-create "*my shortcuts*"))
            (set-buffer buf)
