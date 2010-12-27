@@ -366,6 +366,17 @@ line instead."
     )
   )
 
+;; my tagging system
+(defun my-tagging ()
+  "This function make TAGS file by looking into current project dir and parsing all .rb file to generate tags of methods"
+  (interactive)
+  (setq default-directory "~/Projects/Adobe_SPLC/adobe_splc/")
+  ; (call-process "/bin/bash" nil nil nil "-c" "touch test.txt")
+  (call-process "/bin/bash" nil nil nil "-c" "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
+  )
+
+(setq tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags"))
+
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
   (let (path)
