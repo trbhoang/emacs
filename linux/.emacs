@@ -372,7 +372,7 @@ line instead."
   (interactive)
   (setq default-directory "~/Projects/Adobe_SPLC/adobe_splc/")
   ; (call-process "/bin/bash" nil nil nil "-c" "touch test.txt")
-  (call-process "/bin/bash" nil nil nil "-c" "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
+  (call-process "/bin/bash" nil nil nil "-c" "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
   )
 
 (setq tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags"))
