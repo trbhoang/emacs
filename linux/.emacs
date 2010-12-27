@@ -376,7 +376,8 @@ line instead."
   )
 
 
-;; my tagging features 
+;; my tagging features
+(defvar my-ruby-code-tagging-command "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
 (defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
 (defvar my-tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags" "/home/hoangtran/Projects/ruby1.8.7"))
 (setq tags-table-list my-tags-table-list)
@@ -398,6 +399,8 @@ line instead."
     (setq my-tags-table-list (mapcar '(lambda (x) (concat my-tags-table-dir x)) list))
     (setq tags-table-list my-tags-table-list)
   ))
+
+
 
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
