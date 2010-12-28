@@ -359,7 +359,7 @@ line instead."
           (setq default-directory path)
           (ido-find-file))
       (progn
-				(my-split-window w)
+	(my-split-window w)
         (find-file path)
         )
        )
@@ -372,7 +372,7 @@ line instead."
   (interactive)
   (setq default-directory "~/Projects/Adobe_SPLC/adobe_splc/")
   ; (call-process "/bin/bash" nil nil nil "-c" "touch test.txt")
-  (call-process "/bin/bash" nil nil nil "-c" "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
+  (call-process "/bin/bash" nil nil nil "-c" my-ruby-code-tagging-command)
   )
 
 
@@ -400,7 +400,55 @@ line instead."
     (setq tags-table-list my-tags-table-list)
   ))
 
+(defun my-make-tagging-command (project file-pattern regex output)
+  (concat "find " project " -name " "'" file-pattern "'" " -print | etags --language=none " "--regex='" regex "'" " --output='" output "'" " -")
+  )
 
+(defun my-general-tagging (project file-pattern regex output)
+  ; (interactive "sProject dir: \nsFile pattern: \nsName your tag file: ")
+  (if (file-exists-p project)
+      (progn
+        (setq tagging-command (my-make-tagging-command project file-pattern regex output))
+        (call-process "/bin/bash" nil nil nil "-c" tagging-command)
+        )
+    (message "Project doesn't exist!")
+      )
+  )
+
+(defun my-tagging (tag-config-file)
+  (let (args)
+    (setq args (my-parse-tag-config-file tag-config-file))
+    (my-general-tagging args)
+    )
+  )
+
+(defvar my-configurations nil)
+
+;; this function load all neccessary configurations from a file
+(defun my-load-configurations (config-file)
+  "Return a list of arguments correspond to lines of tag-config-file"
+  ;; (message config-file)
+  (let (config-list config config-items key value hash-of-configs)
+    (if (file-exists-p config-file)
+      (progn
+        (with-temp-buffer
+          (insert-file-contents config-file)
+          (setq config-list (split-string (buffer-string) "[ \t]*\n"))
+          )
+        (while config-list
+          (setq config (car config-list))
+          (setq config-list (cdr config-list))
+          (setq config-items (split-string config "[ \t]*=[ \t]*"))
+          (setq key (nth 0 config-items))
+          (setq value (nth 1 config-items))
+          (add-to-list 'hash-of-configs (cons key value))
+          )
+        (setq my-configurations hash-of-configs)
+      )
+      (message "Config file doesn't exist!")
+    )
+  )
+  )
 
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
