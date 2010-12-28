@@ -224,18 +224,61 @@ line instead."
 (defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
 (defvar my-completion-list nil)
-
-(defvar my-ruby-code-tagging-command "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
 (defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
+
+(defvar my-configurations nil)
+(defvar my-tagging-command nil)
 (defvar my-tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags" "/home/hoangtran/Projects/ruby1.8.7"))
+
+
 (setq tags-table-list my-tags-table-list)
 
 
 (defvar my-current-project-path nil)
-(defvar )
+
+
 
 
 ;;;;; Implementation of my features
+
+
+;; this function load all neccessary configurations from a file
+(defun my-load-configurations-from-file (config-file)
+  "Return a list of arguments correspond to lines of tag-config-file"
+  ;; (message config-file)
+  (let (config-list config key value hash-of-configs)
+    (if (file-exists-p config-file)
+      (progn
+        (with-temp-buffer
+          (insert-file-contents config-file)
+          (setq config-list (split-string (buffer-string) "[ \t]*\n"))
+          )
+        (while config-list
+          (setq config (car config-list))
+          (setq config-list (cdr config-list))
+          (setq pos (string-match "=" config))
+          (if pos
+              (progn
+                (setq key (substring config 0 pos))
+                (setq value (substring config (+ 1 pos)))
+                (add-to-list 'hash-of-configs (cons key value))
+                (setq my-configurations hash-of-configs)
+                )
+            (message "Invalid configuration: %s" config)
+              )
+          )
+      )
+      (message "Config file doesn't exist!")
+    )
+  )
+  )
+
+(defun my-load-configurations ()
+  "This function loads configs saved in 'my-configurations' hash to corresponding vars"
+  (setq my-tagging-command (cdr (assoc "tagging-command" my-configurations)))
+  (setq my-tags-table-list (mapcar '(lambda (x) (concat my-tags-table-dir x)) (split-string (cdr (assoc "tags-table-list" my-configurations)))))
+  )
+
 
 ;; set my current project path
 (defun my-set-current-project-path (path)
@@ -422,38 +465,6 @@ line instead."
     )
   )
 
-(defvar my-configurations nil)
-
-;; this function load all neccessary configurations from a file
-(defun my-load-configurations (config-file)
-  "Return a list of arguments correspond to lines of tag-config-file"
-  ;; (message config-file)
-  (let (config-list config key value hash-of-configs)
-    (if (file-exists-p config-file)
-      (progn
-        (with-temp-buffer
-          (insert-file-contents config-file)
-          (setq config-list (split-string (buffer-string) "[ \t]*\n"))
-          )
-        (while config-list
-          (setq config (car config-list))
-          (setq config-list (cdr config-list))
-          (setq pos (string-match "=" config))
-          (if pos
-              (progn
-                (setq key (substring config 0 pos))
-                (setq value (substring config (+ 1 pos)))
-                (add-to-list 'hash-of-configs (cons key value))
-                (setq my-configurations hash-of-configs)
-                )
-            (message "Invalid configuration: %s" config)
-              )
-          )
-      )
-      (message "Config file doesn't exist!")
-    )
-  )
-  )
 
 (defun my-explorer (request)
 	(interactive "sWhat do you want? ")
