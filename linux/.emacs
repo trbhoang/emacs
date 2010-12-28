@@ -201,9 +201,12 @@ line instead."
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My new features
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;; Key bindings
 
 (global-set-key "\M-`" 'other-window)
 (global-set-key "\M-1" 'delete-window)
@@ -213,15 +216,26 @@ line instead."
 (global-set-key [f2] 'my-zooming)
 (global-set-key [f5] 'my-refresh-buffer)
 
-(defun .emacs ()
-  (interactive)
-  (find-file "~/.emacs"))
 
-;; my current project path
-(defvar my-current-project-path "~/Projects/MagooshExam/magoosh_exam/")
+;;;;; My configurations
+
+(defvar my-configurations-path "~/Projects/EmacsConfigurations/")
 (defvar my-projects-path "~/Projects/")
 (defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
+(defvar my-completion-list nil)
+
+(defvar my-ruby-code-tagging-command "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
+(defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
+(defvar my-tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags" "/home/hoangtran/Projects/ruby1.8.7"))
+(setq tags-table-list my-tags-table-list)
+
+
+(defvar my-current-project-path nil)
+(defvar )
+
+
+;;;;; Implementation of my features
 
 ;; set my current project path
 (defun my-set-current-project-path (path)
@@ -308,15 +322,6 @@ line instead."
 	)
 
 
-;; my initial completion list 
-(setq my-completion-list nil)
-;; (add-to-list 'my-completion-list (cons "a" "a"))
-;; (add-to-list 'my-completion-list (cons "controllers" (my-concat-with-project-path "app/controllers/")))
-;; (add-to-list 'my-completion-list (cons "views" (my-concat-with-project-path "app/views/")))
-;; (add-to-list 'my-completion-list (cons "models" (my-concat-with-project-path "app/models/")))
-;; (add-to-list 'my-completion-list (cons "user.rb" (my-concat-with-project-path "app/models/user.rb")))
-
-
 ;; add a shortcut to completion list
 (defun my-add-a-shortcut (alias path)
 	(interactive "sAlias: \nsPath: ")
@@ -377,11 +382,6 @@ line instead."
 
 
 ;; my tagging features
-(defvar my-ruby-code-tagging-command "find . -name '*.rb' -print | etags --language=none --regex='/^[ \t]*def [ \t]*\\(self.\\)?\\([a-zA-Z_.][a-zA-Z_.?!0-9]*\\)/\\2/' --output='/home/hoangtran/Projects/Tags/project_adobe_splc_tags' -")
-(defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
-(defvar my-tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags" "/home/hoangtran/Projects/ruby1.8.7"))
-(setq tags-table-list my-tags-table-list)
-
 (defun my-print-current-project-tags-table-list ()
   (interactive)
   (let ((list my-tags-table-list))
@@ -428,7 +428,7 @@ line instead."
 (defun my-load-configurations (config-file)
   "Return a list of arguments correspond to lines of tag-config-file"
   ;; (message config-file)
-  (let (config-list config config-items key value hash-of-configs)
+  (let (config-list config key value hash-of-configs)
     (if (file-exists-p config-file)
       (progn
         (with-temp-buffer
@@ -438,12 +438,17 @@ line instead."
         (while config-list
           (setq config (car config-list))
           (setq config-list (cdr config-list))
-          (setq config-items (split-string config "[ \t]*=[ \t]*"))
-          (setq key (nth 0 config-items))
-          (setq value (nth 1 config-items))
-          (add-to-list 'hash-of-configs (cons key value))
+          (setq pos (string-match "=" config))
+          (if pos
+              (progn
+                (setq key (substring config 0 pos))
+                (setq value (substring config (+ 1 pos)))
+                (add-to-list 'hash-of-configs (cons key value))
+                (setq my-configurations hash-of-configs)
+                )
+            (message "Invalid configuration: %s" config)
+              )
           )
-        (setq my-configurations hash-of-configs)
       )
       (message "Config file doesn't exist!")
     )
