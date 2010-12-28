@@ -181,6 +181,10 @@ line instead."
 (require 'autopair)
 (autopair-global-mode) ;; enable autopair in all buffers
 
+;; etags select
+(require 'etags-select)
+(global-set-key "\M-." 'etags-select-find-tag)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
