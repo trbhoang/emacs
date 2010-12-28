@@ -219,7 +219,8 @@ line instead."
 
 ;;;;; My configurations
 
-(defvar my-configurations-path "~/Projects/EmacsConfigurations/")
+(defvar my-configurations-path "/home/hoangtran/Projects/EmacsConfigurations/")
+(defvar my-project-configuration-path (concat my-configurations-path "conf"))
 (defvar my-projects-path "~/Projects/")
 (defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
@@ -227,20 +228,28 @@ line instead."
 (defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
 
 (defvar my-configurations nil)
-(defvar my-tagging-command nil)
-(defvar my-tags-table-list '("/home/hoangtran/Projects/Tags/project_adobe_splc_tags" "/home/hoangtran/Projects/ruby1.8.7"))
 
-
-(setq tags-table-list my-tags-table-list)
-
-
+;; following vars will be loaded from file
 (defvar my-current-project-path nil)
-
-
+(defvar my-project-language nil)
+(defvar my-tagging-command nil)
+(defvar my-tags-table-list nil)
 
 
 ;;;;; Implementation of my features
 
+(defun my-initializing ()
+  ; load configurations from file
+  (my-load-configurations-from-file my-project-configuration-path)
+  ; load configurations into corresponding vars
+  (my-load-configurations-to-vars)
+  ; update tags table list
+  (setq tags-table-list my-tags-table-list)
+  ; tagging code
+  (if my-tagging-command
+      (my-tagging)
+    )
+  )
 
 ;; this function load all neccessary configurations from a file
 (defun my-load-configurations-from-file (config-file)
@@ -256,34 +265,64 @@ line instead."
         (while config-list
           (setq config (car config-list))
           (setq config-list (cdr config-list))
-          (setq pos (string-match "=" config))
-          (if pos
+          (if (> (length config) 0)
               (progn
-                (setq key (substring config 0 pos))
-                (setq value (substring config (+ 1 pos)))
-                (add-to-list 'hash-of-configs (cons key value))
-                (setq my-configurations hash-of-configs)
+                (setq pos (string-match "=" config))
+                (if pos
+                    (progn
+                      (setq key (substring config 0 pos))
+                      (setq value (substring config (+ 1 pos)))
+                      (add-to-list 'hash-of-configs (cons key value))
+                      (setq my-configurations hash-of-configs)
+                      )
+                  (message "Invalid configuration: %s" config)
+                  )
                 )
-            (message "Invalid configuration: %s" config)
-              )
+            )
           )
-      )
+        )
       (message "Config file doesn't exist!")
     )
   )
   )
 
-(defun my-load-configurations ()
+(defun my-load-configurations-to-vars ()
   "This function loads configs saved in 'my-configurations' hash to corresponding vars"
-  (setq my-tagging-command (cdr (assoc "tagging-command" my-configurations)))
-  (setq my-tags-table-list (mapcar '(lambda (x) (concat my-tags-table-dir x)) (split-string (cdr (assoc "tags-table-list" my-configurations)))))
+  (let (tags-table-list)
+    ; load project path
+    (setq my-current-project-path (cdr (assoc "project-path" my-configurations)))
+   
+    ; load tagging command 
+    (setq my-tagging-command (cdr (assoc "tagging-command" my-configurations)))
+    
+    ; load tags table list
+    (setq tags-table-list (cdr (assoc "tags-table-list" my-configurations)))
+    (if tags-table-list
+        (setq my-tags-table-list (mapcar '(lambda (x) (concat my-tags-table-dir x)) (split-string tags-table-list)))
+      )
+    
+    ; load project language
+    (setq my-project-language (cdr (assoc "language" my-configurations)))
+    )
   )
 
 
+; change project and reload configurations
+(defun my-change-project (project-name)
+  (interactive "sProject name: ")
+  (if (file-exists-p (concat my-configurations-path project-name))
+      (progn
+        (setq my-project-configuration-path (concat my-configurations-path project-name))
+        ; reinitializing
+        (my-initializing)
+        )
+    )
+  )
+
 ;; set my current project path
 (defun my-set-current-project-path (path)
-	(interactive "sNew project path: ")
-	(setq my-current-project-path path))
+  (interactive "sNew project path: ")
+  (setq my-current-project-path path))
 
 ;; my save windows configuration
 (defun my-save-windows-config ()
@@ -292,9 +331,9 @@ line instead."
 
 ;; my restore saved windows configuration
 (defun my-restore-windows-configuration ()
-	(if my-saved-window-config
-			(set-window-configuration my-saved-window-config)
-		)
+  (if my-saved-window-config
+      (set-window-configuration my-saved-window-config)
+    )
   )
 
 ;; my reset saved windows configuration
@@ -344,50 +383,50 @@ line instead."
   (if (eq (selected-window) (next-window))
       (setq my-current-zoom t)
     (setq my-current-zoom nil)
-      )
+    )
   (if my-current-zoom
       (progn
         (my-restore-windows-configuration)
         (setq my-current-zoom nil)
         (my-reset-saved-window-config) ;; reset window config
-				)
-		(progn
-			(my-save-windows-config) 
-			(delete-other-windows)
-			(setq my-current-zoom t)
-		)
-	))
-                          
+        )
+    (progn
+      (my-save-windows-config) 
+      (delete-other-windows)
+      (setq my-current-zoom t)
+      )
+    ))
+
 
 (defun my-refresh-buffer ()
-	(interactive)
-	(revert-buffer t (not (buffer-modified-p)) t)
-	)
+  (interactive)
+  (revert-buffer t (not (buffer-modified-p)) t)
+  )
 
 
 ;; add a shortcut to completion list
 (defun my-add-a-shortcut (alias path)
-	(interactive "sAlias: \nsPath: ")
-	(add-to-list 'my-completion-list (cons alias (my-concat-with-project-path path))))
+  (interactive "sAlias: \nsPath: ")
+  (add-to-list 'my-completion-list (cons alias (my-concat-with-project-path path))))
 
 ;; remove a shortcut
 (defun my-remove-a-shortcut (alias)
-	(interactive "sShortcut Alias: ")
-	(setq my-completion-list (assq-delete-all alias my-completion-list)))
+  (interactive "sShortcut Alias: ")
+  (setq my-completion-list (assq-delete-all alias my-completion-list)))
 
 ;; my spliting window properly
 (defun my-split-window (w)
-	(let* ((left (nth 0 (window-inside-pixel-edges w)))
-				 (top (nth 1 (window-inside-pixel-edges w)))
-				 (right (nth 2 (window-inside-pixel-edges w)))
-				 (bottom (nth 3 (window-inside-pixel-edges w)))				 
-				 (width (- right left))
-				 (height (- bottom top)))
-		
-		(if (> width height)
-				(split-window w nil t)     ;; split horizontally
-			(split-window w nil nil)))  ;; split vertically
-)
+  (let* ((left (nth 0 (window-inside-pixel-edges w)))
+         (top (nth 1 (window-inside-pixel-edges w)))
+         (right (nth 2 (window-inside-pixel-edges w)))
+         (bottom (nth 3 (window-inside-pixel-edges w)))				 
+         (width (- right left))
+         (height (- bottom top)))
+    
+    (if (> width height)
+        (split-window w nil t)     ;; split horizontally
+      (split-window w nil nil)))  ;; split vertically
+  )
 
 ;; my creating new window
 (defun my-create-new-window ()
@@ -417,57 +456,13 @@ line instead."
 ;; my tagging system
 (defun my-tagging ()
   "This function make TAGS file by looking into current project dir and parsing all .rb file to generate tags of methods"
-  (interactive)
-  (setq default-directory "~/Projects/Adobe_SPLC/adobe_splc/")
   ; (call-process "/bin/bash" nil nil nil "-c" "touch test.txt")
-  (call-process "/bin/bash" nil nil nil "-c" my-ruby-code-tagging-command)
-  )
-
-
-;; my tagging features
-(defun my-print-current-project-tags-table-list ()
-  (interactive)
-  (let ((list my-tags-table-list))
-    (while list
-      (print (car list))
-      (setq list (cdr list))
-      )
-    )
-  )
-
-(defun my-update-my-tags-table-list (newlist)
-  (interactive "sNew tags table list: ")
-  (let ((list nil))
-    (setq list (split-string newlist))
-    (setq my-tags-table-list (mapcar '(lambda (x) (concat my-tags-table-dir x)) list))
-    (setq tags-table-list my-tags-table-list)
-  ))
-
-(defun my-make-tagging-command (project file-pattern regex output)
-  (concat "find " project " -name " "'" file-pattern "'" " -print | etags --language=none " "--regex='" regex "'" " --output='" output "'" " -")
-  )
-
-(defun my-general-tagging (project file-pattern regex output)
-  ; (interactive "sProject dir: \nsFile pattern: \nsName your tag file: ")
-  (if (file-exists-p project)
-      (progn
-        (setq tagging-command (my-make-tagging-command project file-pattern regex output))
-        (call-process "/bin/bash" nil nil nil "-c" tagging-command)
-        )
-    (message "Project doesn't exist!")
-      )
-  )
-
-(defun my-tagging (tag-config-file)
-  (let (args)
-    (setq args (my-parse-tag-config-file tag-config-file))
-    (my-general-tagging args)
-    )
+  (call-process "/bin/bash" nil nil nil "-c" my-tagging-command)
   )
 
 
 (defun my-explorer (request)
-	(interactive "sWhat do you want? ")
+  (interactive "sWhat do you want? ")
   (let (path)
     (cond ((string-match "^m \\(.+\\)$" request)           
            (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
@@ -499,7 +494,7 @@ line instead."
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
-                    
+          
           ((string-match "^plugins$" request)
            (setq path (concat my-current-project-path "vendor/" (match-string 1 request)))
            (my-create-new-window)
@@ -590,7 +585,7 @@ line instead."
            (message "Your current project path: %s" my-current-project-path))
 
           ((string-match "^change prj$" request)
-           (call-interactively 'my-set-current-project-path))
+           (call-interactively 'my-change-project))
 
           ((string-match "^prjs$" request)
            (setq path my-projects-path)
@@ -648,3 +643,7 @@ line instead."
           )
     )
   )
+
+;;;;; Initializations
+
+(my-initializing)
