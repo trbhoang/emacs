@@ -567,6 +567,14 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto test dir
+          ((string-match "^test$" request)
+           (setq path (concat my-current-project-path "test/"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
           
           ;; goto notes
           ((string-match "^notes$" request)
