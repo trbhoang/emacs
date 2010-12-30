@@ -461,51 +461,67 @@ line instead."
 (defun my-tagging ()
   "This function make TAGS file by looking into current project dir and parsing all .rb file to generate tags of methods"
   ; (call-process "/bin/bash" nil nil nil "-c" "touch test.txt")
+  (message "Tagging........")
   (call-process "/bin/bash" nil nil nil "-c" my-tagging-command)
+  (message "Tagging finished!")
   )
 
 
 (defun my-explorer (request)
   (interactive "sWhat do you want? ")
   (let (path)
-    (cond ((string-match "^m \\(.+\\)$" request)           
+    (cond ((string-match "^m \\(.+\\)$" request)  ;; goto specific model
            (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
            (my-create-new-window)
            (find-file path))
-          
+
+          ;; goto specific controller 
           ((string-match "^c \\(.+\\)$" request)
            (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb"))
            (my-create-new-window)
            (find-file path))
-          
+
+          ;; goto models dir 
           ((string-match "^ms$" request)
            (setq path (concat my-current-project-path "app/models"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
-          
+
+          ;; goto views dir 
           ((string-match "^vs$" request)
            (setq path (concat my-current-project-path "app/views"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
-          
+
+          ;; goto controllers dir 
           ((string-match "^cs$" request)
            (setq path (concat my-current-project-path "app/controllers"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
-          
-          ((string-match "^plugins$" request)
-           (setq path (concat my-current-project-path "vendor/" (match-string 1 request)))
+
+          ;; goto helpers dir 
+          ((string-match "^hs$" request)
+           (setq path (concat my-current-project-path "app/helpers"))
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto plugins dir
+          ((string-match "^plugs$" request)
+           (setq path (concat my-current-project-path "vendor/plugins"))
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ;; goto project dir
           ((string-match "^prj$" request)
            (setq path my-current-project-path)
            (my-create-new-window)
@@ -513,6 +529,7 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto config dir
           ((string-match "^conf$" request)
            (setq path (concat my-current-project-path "config/"))
            (my-create-new-window)
@@ -520,6 +537,7 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto directory db/
           ((string-match "^db$" request)
            (setq path (concat my-current-project-path "db/"))
            (my-create-new-window)
@@ -527,6 +545,13 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto database.yml
+          ((string-match "^db conf$" request)
+           (setq path (concat my-current-project-path "config/database.yml"))
+           (my-create-new-window)
+           (find-file path))
+
+          ;; goto javascripts dir
           ((string-match "^js$" request)
            (setq path (concat my-current-project-path "public/javascripts/"))
            (my-create-new-window)
@@ -534,6 +559,7 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto stylesheets dir
           ((string-match "^stls$" request)
            (setq path (concat my-current-project-path "public/stylesheets/"))
            (my-create-new-window)
@@ -562,9 +588,9 @@ line instead."
            (my-create-new-window)
            (find-file path))
 
-          ((string-match "^scratch$" request)
+          ((string-match "^blank$" request)
            (my-create-new-window)
-           (switch-to-buffer "*scratch*"))
+           (switch-to-buffer "*blank*"))
 
           ((string-match "^shell$" request)
            (setq default-directory my-current-project-path)
@@ -585,8 +611,11 @@ line instead."
            (delete-window)
            (switch-to-buffer-other-frame buf))
           
-          ((string-match "^pwd$" request)
+          ((string-match "^pd$" request)
            (message "Your current project path: %s" my-current-project-path))
+
+          ((string-match "^pwd$" request)
+           (message "Your buffer file name: %s" (buffer-file-name)))
 
           ((string-match "^change prj$" request)
            (call-interactively 'my-change-project))
