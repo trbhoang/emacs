@@ -590,7 +590,7 @@ line instead."
 
           ((string-match "^blank$" request)
            (my-create-new-window)
-           (switch-to-buffer "*blank*"))
+           (switch-to-buffer "*scratch*"))
 
           ((string-match "^shell$" request)
            (setq default-directory my-current-project-path)
