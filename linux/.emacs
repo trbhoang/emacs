@@ -600,6 +600,7 @@ line instead."
            (my-create-new-window)
            (switch-to-buffer "*scratch*"))
 
+          ;; open eshell 
           ((string-match "^shell$" request)
            (setq default-directory my-current-project-path)
            (my-create-new-window)
@@ -614,20 +615,25 @@ line instead."
           ((string-match "^del win$" request)
            (delete-window))
 
+          ;; display current buffer on another new frame
           ((string-match "^make frame$" request)
            (setq buf (window-buffer))
            (delete-window)
            (switch-to-buffer-other-frame buf))
-          
+
+          ;; display current project path
           ((string-match "^pd$" request)
            (message "Your current project path: %s" my-current-project-path))
 
+          ;; display current buffer file path 
           ((string-match "^pwd$" request)
            (message "Your buffer file name: %s" (buffer-file-name)))
 
+          ;; switch to other project which has fixed name in configurations dir
           ((string-match "^change prj$" request)
            (call-interactively 'my-change-project))
 
+          ;; goto dir of store all project 
           ((string-match "^prjs$" request)
            (setq path my-projects-path)
            (my-create-new-window)
@@ -635,8 +641,17 @@ line instead."
            (ido-find-file)
            (setq default-directory my-current-project-path))
 
+          ;; goto home dir
           ((string-match "^~$" request)
            (setq path "~/")
+           (my-create-new-window)
+           (setq default-directory path)
+           (ido-find-file)
+           (setq default-directory my-current-project-path))
+
+          ;; goto rails yasnippets dir
+          ((string-match "^yas$" request)
+           (setq path "/home/hoangtran/.emacs.d/yasnippet-0.6.1c/snippets/text-mode/ruby-mode")
            (my-create-new-window)
            (setq default-directory path)
            (ido-find-file)
@@ -681,6 +696,10 @@ line instead."
            (my-create-new-window)
            (find-file path))
           
+          ((string-match "^snips$" request)
+           (setq path "~/Projects/Notes/Snippet.txt")
+           (my-create-new-window)
+           (find-file path))
           )
     )
   )
