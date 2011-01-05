@@ -467,242 +467,189 @@ line instead."
   )
 
 
-(defun my-explorer (request)
-  (interactive "sWhat do you want? ")
+;; my goto a project's file
+(defun my-goto-project-file (input-pattern dir-to-find extension-pattern)
   (let (path)
-    (cond ((string-match "^m \\(.+\\)$" request)  ;; goto specific model
-           (setq path (concat my-current-project-path "app/models/" (match-string 1 request) ".rb"))
-           (my-create-new-window)
-           (find-file path))
-
-          ;; goto specific controller 
-          ((string-match "^c \\(.+\\)$" request)
-           (setq path (concat my-current-project-path "app/controllers/" (match-string 1 request) "s_controller.rb"))
-           (my-create-new-window)
-           (find-file path))
-
-          ;; goto models dir 
-          ((string-match "^ms$" request)
-           (setq path (concat my-current-project-path "app/models"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto views dir 
-          ((string-match "^vs$" request)
-           (setq path (concat my-current-project-path "app/views"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto controllers dir 
-          ((string-match "^cs$" request)
-           (setq path (concat my-current-project-path "app/controllers"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto helpers dir 
-          ((string-match "^hs$" request)
-           (setq path (concat my-current-project-path "app/helpers"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto plugins dir
-          ((string-match "^plugs$" request)
-           (setq path (concat my-current-project-path "vendor/plugins"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto project dir
-          ((string-match "^prj$" request)
-           (setq path my-current-project-path)
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto config dir
-          ((string-match "^conf$" request)
-           (setq path (concat my-current-project-path "config/"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto directory db/
-          ((string-match "^db$" request)
-           (setq path (concat my-current-project-path "db/"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto database.yml
-          ((string-match "^db conf$" request)
-           (setq path (concat my-current-project-path "config/database.yml"))
-           (my-create-new-window)
-           (find-file path))
-
-          ;; goto javascripts dir
-          ((string-match "^js$" request)
-           (setq path (concat my-current-project-path "public/javascripts/"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto stylesheets dir
-          ((string-match "^stls$" request)
-           (setq path (concat my-current-project-path "public/stylesheets/"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto test dir
-          ((string-match "^test$" request)
-           (setq path (concat my-current-project-path "test/"))
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          
-          ;; goto notes
-          ((string-match "^notes$" request)
-           (setq path "~/Projects/Notes/")
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-          
-          ;; goto todos
-          ((string-match "^todos$" request)
-           (setq path "~/Projects/Notes/Tasks.org")
-           (my-create-new-window)
-           (find-file path))
-
-          ;; other commands
-          ((string-match "^.emacs$" request)
-           (setq path "~/.emacs")
-           (my-create-new-window)
-           (find-file path))
-
-          ((string-match "^blank$" request)
-           (my-create-new-window)
-           (switch-to-buffer "*scratch*"))
-
-          ;; open eshell 
-          ((string-match "^shell$" request)
-           (setq default-directory my-current-project-path)
-           (my-create-new-window)
-           (eshell))
-          
-          ((string-match "^save wins$" request)
-           (my-save-windows-config))
-
-          ((string-match "^restore wins$" request)
-           (my-restore-windows-configuration))
-
-          ((string-match "^del win$" request)
-           (delete-window))
-
-          ;; display current buffer on another new frame
-          ((string-match "^make frame$" request)
-           (setq buf (window-buffer))
-           (delete-window)
-           (switch-to-buffer-other-frame buf))
-
-          ;; display current project path
-          ((string-match "^pd$" request)
-           (message "Your current project path: %s" my-current-project-path))
-
-          ;; display current buffer file path 
-          ((string-match "^pwd$" request)
-           (message "Your buffer file name: %s" (buffer-file-name)))
-
-          ;; switch to other project which has fixed name in configurations dir
-          ((string-match "^change prj$" request)
-           (call-interactively 'my-change-project))
-
-          ;; goto dir of store all project 
-          ((string-match "^prjs$" request)
-           (setq path my-projects-path)
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto home dir
-          ((string-match "^~$" request)
-           (setq path "~/")
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          ;; goto rails yasnippets dir
-          ((string-match "^yas$" request)
-           (setq path "/home/hoangtran/.emacs.d/yasnippet-0.6.1c/snippets/text-mode/ruby-mode")
-           (my-create-new-window)
-           (setq default-directory path)
-           (ido-find-file)
-           (setq default-directory my-current-project-path))
-
-          
-          ((string-match "^shortcuts$" request)
-           (setq buf (get-buffer-create "*my shortcuts*"))
-           (set-buffer buf)
-           (setq buffer-read-only nil)
-           ;; add shortcut descriptions to this buffer
-           (insert "1.  prj\n")
-           (insert "2.  models\n")
-           (insert "3.  views\n")
-           (insert "4.  controllers\n")
-           (insert "5.  config\n")
-           (insert "6.  db\n")
-           (insert "7.  plugins\n")
-           (insert "8.  xxx model\n")
-           (insert "9.  xxx controller\n")
-           (insert "10. change prj\n\n")
-
-           (insert "11. notes\n")
-           (insert "12. todos\n")
-           (insert "13. .emacs\n")
-           (insert "14. scratch\n")
-           (insert "15. shell\n")
-           (insert "16. save wins\n")
-           (insert "17. restore wins\n")
-           (insert "18. del win\n")
-           (insert "19. make frame\n")
-           (insert "20. pwd\n")
-           (insert "21. shortcuts\n")
-           
-           (setq buffer-read-only t)
-           (my-create-new-window)
-           (switch-to-buffer buf)
-           )
-
-          ((string-match "^rem$" request)
-           (setq path "~/Projects/Notes/Remember.txt")
-           (my-create-new-window)
-           (find-file path))
-          
-          ((string-match "^snips$" request)
-           (setq path "~/Projects/Notes/Snippet.txt")
-           (my-create-new-window)
-           (find-file path))
-          )
+    (setq path (concat my-current-project-path dir-to-find (match-string 1 input-pattern) extension-pattern))
+    (my-create-new-window)
+    (find-file path)
     )
   )
+
+;; my goto a project's dir
+(defun my-goto-project-dir (dir)
+  (let (path)
+    (setq path (concat my-current-project-path dir))
+    (my-create-new-window)
+    (setq default-directory path)
+    (ido-find-file)
+    (setq default-directory my-current-project-path)
+    )
+  )
+
+;; my goto a normal dir
+(defun my-goto-normal-dir (dir)
+  (my-create-new-window)
+  (setq default-directory dir)
+  (ido-find-file)
+  (setq default-directory my-current-project-path)
+  )
+
+;; my goto a normal file
+(defun my-goto-normal-file (file)
+  (my-create-new-window)
+  (find-file file)
+  )
+
+
+(defun my-explorer (request)
+  (interactive "sWhat do you want? ")
+  (cond
+
+   ;;======================================================================
+   ;; For RoR projects
+   ;;======================================================================
+
+   ;; goto a model
+   ((string-match "^m \\(.+\\)$" request)  
+    (my-goto-project-file request "app/models/" ".rb"))
+
+   ;; goto a controller 
+   ((string-match "^c \\(.+\\)$" request)
+    (my-goto-project-file request "app/controllers/" "s_controller.rb"))
+
+   ;; goto database.yml
+   ((string-match "^db conf$" request)
+    (my-goto-project-file "" "config/" "database.yml"))
+   
+   ;; goto models dir 
+   ((string-match "^ms$" request)
+    (my-goto-project-dir "app/models"))
+   
+   ;; goto views dir 
+   ((string-match "^vs$" request)
+    (my-goto-project-dir "app/views"))
+
+   ;; goto controllers dir 
+   ((string-match "^cs$" request)
+    (my-goto-project-dir "app/controllers"))
+
+   ;; goto helpers dir 
+   ((string-match "^hs$" request)
+    (my-goto-project-dir "app/helpers"))
+
+   ;; goto plugins dir
+   ((string-match "^plugs$" request)
+    (my-goto-project-dir "vendor/plugins"))
+
+   ;; goto project dir
+   ((string-match "^prj$" request)
+    (my-goto-project-dir ""))
+
+   ;; goto config dir
+   ((string-match "^conf$" request)
+    (my-goto-project-dir "config/"))   
+
+   ;; goto directory db/
+   ((string-match "^db$" request)
+    (my-goto-project-dir "db/"))
+
+   ;; goto javascripts dir
+   ((string-match "^js$" request)
+    (my-goto-project-dir "public/javascripts/"))
+
+   ;; goto stylesheets dir
+   ((string-match "^stls$" request)
+    (my-goto-project-dir "public/stylesheets/"))
+
+   ;; goto test dir
+   ((string-match "^test$" request)
+    (my-goto-project-dir "test/"))
+
+
+   ;;======================================================================
+   ;; For Android projects
+   ;;======================================================================
+
+   
+   
+   ;;======================================================================
+   ;; Regular shortcuts
+   ;;======================================================================
+   
+   ;; goto notes
+   ((string-match "^notes$" request)
+    (my-goto-normal-dir "~/Projects/Notes"))
+   
+   ;; goto todos
+   ((string-match "^todos$" request)
+    (my-goto-normal-file "~/Projects/Notes/Tasks.org"))
+
+   ;; goto .emacs
+   ((string-match "^.emacs$" request)
+    (my-goto-normal-file "~/.emacs"))
+
+   ;; goto *scratch* buffer
+   ((string-match "^blank$" request)
+    (my-create-new-window)
+    (switch-to-buffer "*scratch*"))
+
+   ;; open eshell 
+   ((string-match "^shell$" request)
+    (setq default-directory my-current-project-path)
+    (my-create-new-window)
+    (eshell))
+   
+   ((string-match "^save wins$" request)
+    (my-save-windows-config))
+
+   ((string-match "^restore wins$" request)
+    (my-restore-windows-configuration))
+
+   ((string-match "^del win$" request)
+    (delete-window))
+
+   ;; display current buffer on another new frame
+   ((string-match "^make frame$" request)
+    (setq buf (window-buffer))
+    (delete-window)
+    (switch-to-buffer-other-frame buf))
+
+   ;; display current project path
+   ((string-match "^pd$" request)
+    (message "Your current project path: %s" my-current-project-path))
+
+   ;; display current buffer file path 
+   ((string-match "^pwd$" request)
+    (message "Your buffer file name: %s" (buffer-file-name)))
+
+   ;; switch to other project which has fixed name in configurations dir
+   ((string-match "^change prj$" request)
+    (call-interactively 'my-change-project))
+
+   ;; goto dir of store all project 
+   ((string-match "^prjs$" request)
+    (my-goto-normal-dir my-projects-path))
+
+   ;; goto home dir
+   ((string-match "^~$" request)
+    (my-goto-normal-dir "~"))
+
+   ;; goto rails yasnippets dir
+   ((string-match "^yas$" request)
+    (my-goto-normal-dir "/home/hoangtran/.emacs.d/yasnippet-0.6.1c/snippets/text-mode/ruby-mode"))
+
+   ;; goto remember list 
+   ((string-match "^rem$" request)
+    (my-goto-normal-file "~/Projects/Notes/Remember.txt"))
+
+   ;; view my snippets note
+   ((string-match "^snips$" request)
+    (my-goto-normal-file "~/Projects/Notes/Snippet.txt"))
+   
+   ) ;; end cond
+  )  ;; end defun
+
 
 ;;;;; Initializations
 
