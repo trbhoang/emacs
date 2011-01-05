@@ -602,6 +602,10 @@ line instead."
    ((string-match  "^ll \\(.+\\)$" request)
     (my-goto-project-file request "res/layout-land/" ".xml"))   
 
+   ;; goto a values file
+   ((string-match  "^v \\(.+\\)$" request)
+    (my-goto-project-file request "res/values/" ".xml"))   
+
    ;; goto src dir
    ((string-match "^src$" request)
     (my-goto-project-dir (concat "src/" my-android-package)))
