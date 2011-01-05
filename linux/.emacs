@@ -582,15 +582,46 @@ line instead."
    ;; For Android projects
    ;;======================================================================
 
-   ;; goto src dir
-   ((string-match "^src$" request)
-    (my-goto-project-dir (concat "src/" my-android-package)))
-   
    ;; goto AndroidManifest.xml
    ((string-match "^mf$" request)
     (my-goto-project-file "" "" "AndroidManifest.xml"))
 
+   ;; goto strings.xml
+   ((string-match "^strings$" request)
+    (my-goto-project-file "" "res/values/" "strings.xml"))
 
+   ;; goto R.java
+   ((string-match "^R$" request)
+    (my-goto-project-file "" (concat "gen/" my-android-package "/") "R.java"))
+
+   ;; goto a layout
+   ((string-match  "^l \\(.+\\)$" request)
+    (my-goto-project-file request "res/layout/" ".xml"))   
+
+   ;; goto a layout-land
+   ((string-match  "^ll \\(.+\\)$" request)
+    (my-goto-project-file request "res/layout-land/" ".xml"))   
+
+   ;; goto src dir
+   ((string-match "^src$" request)
+    (my-goto-project-dir (concat "src/" my-android-package)))
+   
+   ;; goto res dir
+   ((string-match "^res$" request)
+    (my-goto-project-dir "res/"))
+
+   ;; goto res/values dir
+   ((string-match "^vals$" request)
+    (my-goto-project-dir "res/values"))
+
+   ;; goto res/layout dir
+   ((string-match "^layout$" request)
+    (my-goto-project-dir "res/layout"))
+
+   ;; goto res/layout-land dir
+   ((string-match "^llayout$" request)
+    (my-goto-project-dir "res/layout-land"))
+   
    ;;======================================================================
    ;; Regular shortcuts
    ;;======================================================================
