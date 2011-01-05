@@ -236,8 +236,12 @@ line instead."
 ;; following vars will be loaded from file
 (defvar my-current-project-path nil)
 (defvar my-project-language nil)
+(defvar my-project-type nil)  ;; Ex: ror, android, c++,...
 (defvar my-tagging-command nil)
 (defvar my-tags-table-list nil)
+
+;; config vars for android project
+(defvar my-android-package nil)  ;; Ex: com/example/sudoku (com.example.sudoku)
 
 
 ;;;;; Implementation of my features
@@ -307,8 +311,15 @@ line instead."
     
     ; load project language
     (setq my-project-language (cdr (assoc "language" my-configurations)))
+
+    ; load project type
+    (setq my-project-type (cdr (assoc "type" my-configurations)))
+
+    ; load android project package 
+    (setq my-android-package (cdr (assoc "android-package" my-configurations)))
+    
     )
-  )
+)
 
 
 ; change project and reload configurations
@@ -571,8 +582,15 @@ line instead."
    ;; For Android projects
    ;;======================================================================
 
+   ;; goto src dir
+   ((string-match "^src$" request)
+    (my-goto-project-dir (concat "src/" my-android-package)))
    
-   
+   ;; goto AndroidManifest.xml
+   ((string-match "^mf$" request)
+    (my-goto-project-file "" "" "AndroidManifest.xml"))
+
+
    ;;======================================================================
    ;; Regular shortcuts
    ;;======================================================================
