@@ -204,6 +204,29 @@ line instead."
 (autoload 'linum-mode "linum" "mode for line numbers" t) 
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
+;; hook to css mode
+(defvar hexcolour-keywords-1
+  '(("#[abcdef[:digit:]]\\{6\\}"
+     (0 (put-text-property
+         (match-beginning 0)
+         (match-end 0)
+         'face (list :background 
+                     (match-string-no-properties 0)))))))
+
+(defvar hexcolour-keywords-2
+  '(("#[abcdef[:digit:]]\\{3\\}"
+     (0 (put-text-property
+         (match-beginning 0)
+         (match-end 0)
+         'face (list :background 
+                     (match-string-no-properties 0)))))))
+
+(defun hexcolour-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolour-keywords-1)
+  (font-lock-add-keywords nil hexcolour-keywords-2))
+
+(add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; My new features
