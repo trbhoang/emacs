@@ -239,6 +239,7 @@ line instead."
 (global-set-key "\M-1" 'delete-window)
 (global-set-key "\M-2" 'my-move-current-buffer-to-other-window)
 (global-set-key "\M-o" 'my-explorer)
+(global-set-key "\C-o" 'my-open-newline)
 
 (global-set-key [f2] 'my-zooming)
 (global-set-key [f5] 'my-refresh-buffer)
@@ -726,6 +727,13 @@ line instead."
    ) ;; end cond
   )  ;; end defun
 
+
+;; my goto newline and indent from abitrary position from current line
+(defun my-open-newline ()
+  (interactive)
+  (end-of-line)
+  (newline-and-indent)
+  )
 
 ;;;;; Initializations
 
