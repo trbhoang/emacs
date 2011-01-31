@@ -13,7 +13,9 @@
 (setq cua-enable-cua-keys nil)           ;; only for rectangles
 (cua-mode t)
 
-(setq ;; scrolling
+;; scrolling
+(set-scroll-bar-mode 'right)
+(setq 
   scroll-margin 0                        ;; do smooth scrolling, ...
   scroll-conservatively 100000           ;; ... the defaults ...
   scroll-up-aggressively 0               ;; ... are very ...
@@ -236,12 +238,19 @@ line instead."
 ;;;;; Key bindings
 
 (global-set-key "\M-`" 'other-window)
+(global-set-key [C-S-left] 'shrink-window-horizontally)
+(global-set-key [C-S-right] 'enlarge-window-horizontally)
+(global-set-key [C-S-down] 'shrink-window)
+(global-set-key [C-S-up] 'enlarge-window)
 (global-set-key "\M-1" 'delete-window)
 (global-set-key "\M-2" 'my-move-current-buffer-to-other-window)
 (global-set-key "\M-o" 'my-explorer)
 (global-set-key "\C-o" 'my-open-newline)
 
-(global-set-key [f2] 'my-zooming)
+(global-set-key (kbd "C-S-x") 'my-zooming)
+(global-set-key (kbd "C-S-s") 'scroll-bar-mode)
+(global-set-key (kbd "C-S-o") 'split-window-horizontally)
+(global-set-key (kbd "C-S-e") 'split-window-vertically)
 (global-set-key [f5] 'my-refresh-buffer)
 
 
@@ -723,7 +732,11 @@ line instead."
    ;; view my snippets note
    ((string-match "^snips$" request)
     (my-goto-normal-file "~/Projects/Notes/Snippet.txt"))
-   
+
+   ;; view shortcuts
+   ((string-match "^help$" request)
+    (my-goto-normal-file "~/Projects/Notes/ProjectShortcuts.org"))
+
    ) ;; end cond
   )  ;; end defun
 
