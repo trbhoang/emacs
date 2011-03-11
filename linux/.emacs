@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
-(defconst MY-FONT "Monospace-9")
+(defconst MY-FONT "Monospace-10")
 (set-default-font MY-FONT)
 (menu-bar-mode -1)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
@@ -610,6 +610,9 @@ line instead."
    ((string-match "^test$" request)
     (my-goto-project-dir "test/"))
 
+   ;; goto spec dir
+   ((string-match "^spec$" request)
+    (my-goto-project-dir "spec/"))
 
    ;;======================================================================
    ;; For Android projects
