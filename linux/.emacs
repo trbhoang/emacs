@@ -187,6 +187,12 @@ line instead."
 (require 'etags-select)
 (global-set-key "\M-." 'etags-select-find-tag)
 
+;; code folding
+(defun toggle-selective-display (level)
+  (interactive "nEnter indentation level: ")
+  (set-selective-display level)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
@@ -252,6 +258,7 @@ line instead."
 (global-set-key (kbd "C-S-o") 'split-window-horizontally)
 (global-set-key (kbd "C-S-e") 'split-window-vertically)
 (global-set-key [f5] 'my-refresh-buffer)
+(global-set-key "\M-3" 'toggle-selective-display)
 
 
 ;;;;; My configurations
@@ -598,6 +605,10 @@ line instead."
    ((string-match "^db$" request)
     (my-goto-project-dir "db/"))
 
+   ;; goto public dir
+   ((string-match "^pub$" request)
+    (my-goto-project-dir "public/"))
+
    ;; goto javascripts dir
    ((string-match "^js$" request)
     (my-goto-project-dir "public/javascripts/"))
@@ -611,8 +622,21 @@ line instead."
     (my-goto-project-dir "test/"))
 
    ;; goto spec dir
-   ((string-match "^spec$" request)
+   ((string-match "^sp$" request)
     (my-goto-project-dir "spec/"))
+
+   ;; goto spec/models
+   ((string-match "^sp m$" request)
+    (my-goto-project-dir "spec/models/"))
+
+   ;; goto spec/controllers
+   ((string-match "^sp c$" request)
+    (my-goto-project-dir "spec/controllers/"))
+
+   ;; goto spec/views
+   ((string-match "^sp v$" request)
+    (my-goto-project-dir "spec/views/"))
+   
 
    ;;======================================================================
    ;; For Android projects
