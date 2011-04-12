@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
-(defconst MY-FONT "Monospace-10")
+(defconst MY-FONT "Monospace-9")
 (set-default-font MY-FONT)
 (menu-bar-mode -1)                       ;; show the menu...
 (mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
@@ -186,6 +186,9 @@ line instead."
 ;; etags select
 (require 'etags-select)
 (global-set-key "\M-." 'etags-select-find-tag)
+
+;; htmlize
+(require 'htmlize)
 
 ;; code folding
 (defun toggle-selective-display (level)
