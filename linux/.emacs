@@ -196,6 +196,11 @@ line instead."
   (set-selective-display level)
   )
 
+(defun toggle-selective-display-1 ()
+  (interactive)
+  (set-selective-display (if selective-display nil 4))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
@@ -262,6 +267,7 @@ line instead."
 (global-set-key (kbd "C-S-e") 'split-window-vertically)
 (global-set-key [f5] 'my-refresh-buffer)
 (global-set-key "\M-3" 'toggle-selective-display)
+(global-set-key "\M-4" 'toggle-selective-display-1)
 
 
 ;;;;; My configurations
