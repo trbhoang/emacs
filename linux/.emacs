@@ -201,6 +201,13 @@ line instead."
   (set-selective-display (if selective-display nil 4))
   )
 
+;; color theme
+(add-to-list 'load-path "~/.emacs.d/color-theme")
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-robin-hood)
+(require 'color-theme-solarized)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
