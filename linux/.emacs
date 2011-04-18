@@ -208,6 +208,13 @@ line instead."
 (color-theme-robin-hood)
 (require 'color-theme-solarized)
 
+;; kill to start of line
+(defun kill-to-start-of-line ()
+  "kill from point to start of line"
+  (interactive)
+  (kill-line 0)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming languages
 
@@ -275,6 +282,7 @@ line instead."
 (global-set-key [f5] 'my-refresh-buffer)
 (global-set-key "\M-3" 'toggle-selective-display)
 (global-set-key "\M-4" 'toggle-selective-display-1)
+(global-set-key (kbd "C-;") 'kill-to-start-of-line)
 
 
 ;;;;; My configurations
