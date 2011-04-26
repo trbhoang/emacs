@@ -208,11 +208,36 @@ line instead."
 (color-theme-robin-hood)
 (require 'color-theme-solarized)
 
+;; my goto newline and indent from abitrary position from current line
+(defun my-open-newline ()
+  (interactive)
+  (end-of-line)
+  (newline-and-indent)
+  )
+
 ;; kill to start of line
 (defun kill-to-start-of-line ()
   "kill from point to start of line"
   (interactive)
   (kill-line 0)
+  )
+
+;; put ; at the end of line, go to next line and indent
+(defun add-semicolon-and-go-next ()
+  (interactive)
+  (delete-trailing-whitespace)
+  (end-of-line)
+  (insert ";")
+  (newline-and-indent)
+  )
+
+;; put , at the end of line, go to next line and indent
+(defun add-colon-and-go-next ()
+  (interactive)
+  (delete-trailing-whitespace)
+  (end-of-line)
+  (insert ",")
+  (newline-and-indent)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -282,7 +307,9 @@ line instead."
 (global-set-key [f5] 'my-refresh-buffer)
 (global-set-key "\M-3" 'toggle-selective-display)
 (global-set-key "\M-4" 'toggle-selective-display-1)
-(global-set-key (kbd "C-;") 'kill-to-start-of-line)
+(global-set-key (kbd "C-j") 'kill-to-start-of-line)
+(global-set-key (kbd "C-;") 'add-semicolon-and-go-next)
+(global-set-key (kbd "C-,") 'add-colon-and-go-next)
 
 
 ;;;;; My configurations
@@ -792,12 +819,6 @@ line instead."
   )  ;; end defun
 
 
-;; my goto newline and indent from abitrary position from current line
-(defun my-open-newline ()
-  (interactive)
-  (end-of-line)
-  (newline-and-indent)
-  )
 
 ;;;;; Initializations
 
