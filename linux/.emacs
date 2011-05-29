@@ -190,6 +190,11 @@ line instead."
 ;; htmlize
 (require 'htmlize)
 
+;; gnu assembler mode
+(require 'gas-mode)
+(add-to-list 'auto-mode-alist '("\\.s\\'" . gas-mode))
+
+
 ;; code folding
 (defun toggle-selective-display (level)
   (interactive "nEnter indentation level: ")
