@@ -210,7 +210,7 @@ line instead."
 (add-to-list 'load-path "~/.emacs.d/color-theme")
 (require 'color-theme)
 (color-theme-initialize)
-(color-theme-robin-hood)
+(color-theme-subtle-hacker)
 (require 'color-theme-solarized)
 
 ;; my goto newline and indent from abitrary position from current line
@@ -312,7 +312,7 @@ line instead."
 (global-set-key [f5] 'my-refresh-buffer)
 (global-set-key "\M-3" 'toggle-selective-display)
 (global-set-key "\M-4" 'toggle-selective-display-1)
-(global-set-key (kbd "C-j") 'kill-to-start-of-line)
+(global-set-key (kbd "C-g") 'kill-to-start-of-line)
 (global-set-key (kbd "C-;") 'add-semicolon-and-go-next)
 (global-set-key (kbd "C-,") 'add-colon-and-go-next)
 
