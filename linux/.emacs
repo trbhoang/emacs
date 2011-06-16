@@ -47,7 +47,7 @@
    (format "%s@%s:%s"
            (or (file-remote-p default-directory 'user) user-login-name)
            (or (file-remote-p default-directory 'host) system-name)
-           (file-name-nondirectory (or (buffer-file-name) default-directory)))))
+           (file-name-nondirectory (or (buffer-file-name) dnnnefault-directory)))))
 
 (put 'narrow-to-region 'disabled nil)    ;; enable...
 (put 'erase-buffer 'disabled nil)        ;; ... useful things
@@ -96,6 +96,21 @@ line instead."
 (set-language-environment "UTF-8")       ; prefer utf-8 for language settings
 (set-input-method nil)                   ; no funky input for normal editing;
 (setq read-quoted-char-radix 10)         ; use decimal, not octal
+
+;; set full-screen at start
+(defun toggle-fullscreen (&optional f)
+  (interactive)
+  (let ((current-value (frame-parameter nil 'fullscreen)))
+    (set-frame-parameter nil 'fullscreen
+                         (if (equal 'fullboth current-value)
+                             (if (boundp 'old-fullscreen) old-fullscreen nil)
+                           (progn (setq old-fullscreen current-value)
+                                  'fullboth)))))
+(toggle-fullscreen) 
+                                        ; Make new frames fullscreen by default. Note: this hook doesn't do
+                                        ; anything to the initial frame if it's in your .emacs, since that file is
+                                        ; read _after_ the initial frame is created.
+; (add-hook 'after-make-frame-functions 'toggle-fullscreen)
 
         
 ;; set spliting window horizontally by default
