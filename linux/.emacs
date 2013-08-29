@@ -1,151 +1,63 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; general settings
-(defconst MY-FONT "Monospace-9")
-(set-default-font MY-FONT)
-(menu-bar-mode -1)                       ;; show the menu...
-(mouse-avoidance-mode 'jump)             ;; mouse ptr when cursor is too close
-(tool-bar-mode -1)                       ;; turn-off toolbar
-(setq-default indent-tabs-mode nil)
-
-(setq auto-save-default nil)             ;; disable auto save
-(setq make-backup-files nil)             ;; disable creating backup files
-
-(setq cua-enable-cua-keys nil)           ;; only for rectangles
-(cua-mode t)
-
-;; scrolling
-(set-scroll-bar-mode 'right)
-(setq 
-  scroll-margin 0                        ;; do smooth scrolling, ...
-  scroll-conservatively 100000           ;; ... the defaults ...
-  scroll-up-aggressively 0               ;; ... are very ...
-  scroll-down-aggressively 0             ;; ... annoying
-  scroll-preserve-screen-position t)     ;; preserve screen pos with C-v/M-v 
-
-(global-visual-line-mode 1)              ;; enable line wrapping
-;; (global-linum-mode 1)                    ;; show line number
-
-(scroll-bar-mode nil)                    ;; hide scroll bar
-
-(setq fringe-mode '(1 . 0))              ;; emacs 22+
-(delete-selection-mode 1)                ;; delete the sel with a keyp
-
-(setq x-select-enable-clipboard t        ;; copy-paste should work ...
-  interprogram-paste-function            ;; ...with...
-  'x-cut-buffer-or-selection-value)      ;; ...other X clients
-
-(setq search-highlight t                 ;; highlight when searching... 
-  query-replace-highlight t)             ;; ...and replacing
-(fset 'yes-or-no-p 'y-or-n-p)            ;; enable y/n answers to yes/no 
+;;
+(set-default-font "Monospace-9")
+(menu-bar-mode -1)	                 ;; hide menu
+(tool-bar-mode -1)   	                 ;; hide tool bar 
+(scroll-bar-mode -1)	                 ;; hide scroll bar
+(setq auto-save-default -1)              ;; disable auto save
+(setq make-backup-files -1)              ;; disable creating backup files
+(global-visual-line-mode 1)              ;; line wrapping 
+(global-hl-line-mode t)                  ;; highlight current line
 
 (setq initial-scratch-message
   ";; scratch buffer created -- happy hacking\n")
 
-(setq-default
- frame-title-format
- '(:eval
-   (format "%s@%s:%s"
-           (or (file-remote-p default-directory 'user) user-login-name)
-           (or (file-remote-p default-directory 'host) system-name)
-           (file-name-nondirectory (or (buffer-file-name) dnnnefault-directory)))))
-
-(put 'narrow-to-region 'disabled nil)    ;; enable...
-(put 'erase-buffer 'disabled nil)        ;; ... useful things
-(file-name-shadow-mode t)                ;; be smart about filenames in mbuf
-
 (setq inhibit-startup-message t          ;; don't show ...    
   inhibit-startup-echo-area-message t)   ;; ... startup messages
-(setq require-final-newline t)           ;; end files with a newline
 
-;; Set default font and frame size
-(setq default-frame-alist
-      `(
-        (menu-bar-lines . 0)
-        (vertical-scroll-bars . nil)
-        (tool-bar-lines . 0)
-        (fullscreen . maximized)
-        (font . ,MY-FONT)
-        ))
+(setq x-select-enable-clipboard t)       ;; make emacs copy/paste available out of emacs
 
-;; slick-copy: make copy-past a bit more intelligent
-;; from: http://www.emacswiki.org/emacs/SlickCopy
-(defadvice kill-ring-save (before slick-copy activate compile)
-  "When called interactively witand type RET to get full documentation.h no active region, copy a single
-line instead."
-  (interactive
-    (if mark-active (list (region-beginning) (region-end))
-      (message "Copied line")
-      (list (line-beginning-position)
-               (line-beginning-position 2)))))
+(setq make-backup-files nil)
 
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single
-line instead."
-  (interactive
-    (if mark-active (list (region-beginning) (region-end))
-      (list (line-beginning-position)
-        (line-beginning-position 2)))))
-        
+;; set the default basic indentation width for all c-mode-derived languages
+(setq-default c-basic-offset 4)
 
-;; key board / input method settings
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(set-language-environment "UTF-8")       ; prefer utf-8 for language settings
-(set-input-method nil)                   ; no funky input for normal editing;
-(setq read-quoted-char-radix 10)         ; use decimal, not octal
-
-;; set full-screen at start
-(defun toggle-fullscreen (&optional f)
-  (interactive)
-  (let ((current-value (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter nil 'fullscreen
-                         (if (equal 'fullboth current-value)
-                             (if (boundp 'old-fullscreen) old-fullscreen nil)
-                           (progn (setq old-fullscreen current-value)
-                                  'fullboth)))))
-(toggle-fullscreen) 
-                                        ; Make new frames fullscreen by default. Note: this hook doesn't do
-                                        ; anything to the initial frame if it's in your .emacs, since that file is
-                                        ; read _after_ the initial frame is created.
-; (add-hook 'after-make-frame-functions 'toggle-fullscreen)
-
-        
-;; set spliting window horizontally by default
-;; (setq split-height-threshold nil)
-;; (setq split-width-threshold 0)
-
-;; default directory
+;; default directory 
 (setq default-directory "~/Projects/")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; the modeline
-;; 
-(line-number-mode t)                     ;; show line numbers
-(column-number-mode t)                   ;; show column numbers
-(size-indication-mode t)                 ;; show file size (emacs 22+)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (add-to-list 'load-path "~/.emacs.d")
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; some handy packages
 ;;
-;; dired-details
-(require 'dired-details)
-(dired-details-install)
 
-;; hl-line: highlight the current line
-(when (fboundp 'global-hl-line-mode)
-  (global-hl-line-mode t)) ;; turn it on for all modes by default
+;; 'anything' package
+;; (add-to-list 'load-path "~/.emacs.d/anything-config")
+;; (require 'anything-config)
+
+;; 'anything-ipython'
+;; (require 'anything-ipython)
+;; (add-hook 'python-mode-hook #'(lambda ()
+                                ;; (local-set-key (kbd "M-<tab>") 'anything-ipython-complete)))
+;;				(define-key py-mode-map (kbd "M-<tab>") 'anything-ipython-complete)))
+;; (add-hook 'ipython-shell-hook #'(lambda ()
+;;                                 (define-key py-mode-map (kbd "M-<tab>") 'anything-ipython-complete)))
+
+;; (setq debug-on-quit 1)  ;; for debugging
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (defun mp-add-python-keys ()
+;;   (local-set-key (kbd "C-c q") 'shell))
+ 
+;; (add-hook 'python-mode-hook 'mp-add-python-keys)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 ;; yasnippet
@@ -155,26 +67,14 @@ line instead."
    (yas/initialize)
    (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
 
-;; (require 'yasnippet-bundle)             
-
 ;; org mode
 (add-to-list 'load-path "~/.emacs.d/org-mode/lisp")
 (require 'org-install)
 
 ;; auto-complete mode
-(add-to-list 'load-path "~/.emacs.d/")
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
-
-;; Tabbar
-;; (require 'tabbar)
-;; (tabbar-mode)
-
-;; Icicles Mode (minibuffer completion)
-;; (add-to-list 'load-path "~/.emacs.d/icicles/")
-;; (require 'icicles)
-;; (icy-mode 1)
 
 ;; ido mode
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -189,44 +89,17 @@ line instead."
 (setq ido-show-dot-for-dired t)
 (setq ido-use-filename-at-point t)
 
-;; Numberring windows
-;; (require 'window-number)
-;; (window-number-mode t)
-;; (window-number-meta-mode t)
-
 ;; autopair mode
 (require 'autopair)
 (autopair-global-mode) ;; enable autopair in all buffers
 
-;; etags select
-(require 'etags-select)
-(global-set-key "\M-." 'etags-select-find-tag)
+;; haml mode
+(add-to-list 'load-path "~/.emacs.d/haml-mode")
+(require 'haml-mode)
 
-;; htmlize
-(require 'htmlize)
-
-;; gnu assembler mode
-(require 'gas-mode)
-(add-to-list 'auto-mode-alist '("\\.s\\'" . gas-mode))
-
-
-;; code folding
-(defun toggle-selective-display (level)
-  (interactive "nEnter indentation level: ")
-  (set-selective-display level)
-  )
-
-(defun toggle-selective-display-1 ()
-  (interactive)
-  (set-selective-display (if selective-display nil 4))
-  )
-
-;; color theme
-(add-to-list 'load-path "~/.emacs.d/color-theme")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-subtle-hacker)
-(require 'color-theme-solarized)
+;; 
+;; my stuffs
+;; 
 
 ;; my goto newline and indent from abitrary position from current line
 (defun my-open-newline ()
@@ -260,22 +133,13 @@ line instead."
   (newline-and-indent)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Programming languages
 
-;; haml mode
-(add-to-list 'load-path "~/.emacs.d/haml-mode")
-(require 'haml-mode)
-
-;; ==========================================================
-      
 (global-set-key (kbd "RET")         'newline-and-indent)
 (global-set-key (kbd "C-<f4>")      'kill-buffer-and-window)
 (global-set-key (kbd "<delete>")    'delete-char)  ; delete == delete    
 (global-set-key (kbd "M-g")         'goto-line)    ; M-g  'goto-line
-      
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; programming
+
+
 (autoload 'linum-mode "linum" "mode for line numbers" t) 
 (global-set-key (kbd "C-<f5>") 'linum-mode)                 ;; line numbers
 
@@ -309,7 +173,6 @@ line instead."
 
 
 ;;;;; Key bindings
-
 (global-set-key "\M-`" 'other-window)
 (global-set-key [C-S-left] 'shrink-window-horizontally)
 (global-set-key [C-S-right] 'enlarge-window-horizontally)
@@ -334,16 +197,16 @@ line instead."
 
 ;;;;; My configurations
 
-(defvar my-configurations-path "/home/hoangtran/Projects/EmacsConfigurations/")
-(defvar my-project-configuration-path (concat my-configurations-path "conf"))
 (defvar my-projects-path "~/Projects/")
+(defvar my-configurations-path (concat my-projects-path "Editor/ProjectsNavigationOnEmacs/"))
+(defvar my-project-configuration-path (concat my-configurations-path "conf"))
 (defvar my-saved-window-config nil)
 (defvar my-current-zoom nil)
 (defvar my-completion-list nil)
-(defvar my-tags-table-dir "/home/hoangtran/Projects/Tags/")
+(defvar my-tags-table-dir (concat my-projects-path "Tags/"))
 
 (defvar my-configurations nil)
-
+ 
 ;; following vars will be loaded from file
 (defvar my-current-project-path nil)
 (defvar my-project-language nil)
@@ -368,6 +231,10 @@ line instead."
   (if my-tagging-command
       (my-tagging)
     )
+  ; set default directory
+  (if my-current-project-path
+      (setq default-directory my-current-project-path)
+  )
   )
 
 ;; this function load all neccessary configurations from a file
@@ -614,7 +481,8 @@ line instead."
   (my-create-new-window)
   (setq default-directory dir)
   (ido-find-file)
-  (setq default-directory my-current-project-path)
+  ;; (setq default-directory my-current-project-path)
+  ;; my-current-project-path could be 'nil' in some case which cause error!!!
   )
 
 ;; my goto a normal file
@@ -763,11 +631,19 @@ line instead."
    
    ;; goto notes
    ((string-match "^notes$" request)
-    (my-goto-normal-dir "~/Projects/Notes"))
+    (my-goto-normal-dir "~/Documents/Notes"))
+
+   ;; goto 'must read'
+   ((string-match "^read$" request)
+    (my-goto-normal-file "~/Documents/Notes/Reads.org"))
+
+   ;; goto 'questions'
+   ((string-match "^?$" request)
+    (my-goto-normal-file "~/Documents/Notes/Questions.org"))
    
    ;; goto todos
    ((string-match "^todos$" request)
-    (my-goto-normal-file "~/Projects/Notes/Tasks.org"))
+    (my-goto-normal-file "~/Documents/Notes/Tasks.org"))
 
    ;; goto .emacs
    ((string-match "^.emacs$" request)
@@ -825,15 +701,15 @@ line instead."
 
    ;; goto remember list 
    ((string-match "^rem$" request)
-    (my-goto-normal-file "~/Projects/Notes/Remember.txt"))
+    (my-goto-normal-file "~/Documents/Notes/Remember.txt"))
 
    ;; view my snippets note
    ((string-match "^snips$" request)
-    (my-goto-normal-file "~/Projects/Notes/Snippet.txt"))
+    (my-goto-normal-file "~/Documents/Notes/Snippet.txt"))
 
    ;; view shortcuts
    ((string-match "^help$" request)
-    (my-goto-normal-file "~/Projects/Notes/ProjectShortcuts.org"))
+    (my-goto-normal-file "~/Documents/Notes/ProjectShortcuts.org"))
 
    ) ;; end cond
   )  ;; end defun
@@ -843,3 +719,29 @@ line instead."
 ;;;;; Initializations
 
 (my-initializing)
+
+
+;; testing
+
+
+;(custom-set-variables
+
+
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+
+
+;;  '(py-python-command-args nil)
+;;  '(py-shell-name "ipython")
+;;  '(python-python-command "ipython"))
+;; (custom-set-faces
+ 
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+
+ 
+ ;)
